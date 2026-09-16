@@ -1,4 +1,9 @@
-* gani hubungan non-linear antar variabel multisensor[5].
+### 1\. Algoritma Model yang Digunakan
+
+Sistem SEHAT akan menggunakan algoritma **Random Forest** (berbasis *ensemble tree*)[4][5]. Algoritma ini dipilih karena beberapa alasan utama:
+
+* Memiliki performa terbaik dalam memprediksi status hidrasi dari data sensor *wearable*[4][6].
+* Sangat andal dalam menangani hubungan non-linear antar variabel multisensor[5].
 * Memiliki ketahanan yang tinggi terhadap pencilan (*outlier*) yang sering muncul akibat gangguan gerakan tubuh (*motion artifacts*) saat perangkat digunakan[5][6].
 
 ### 2\. Fitur Masukan (Multisensor)
