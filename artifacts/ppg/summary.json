@@ -1,0 +1,50 @@
+{
+  "started_utc": "2026-09-19T07:47:57.710758+00:00",
+  "complete": false,
+  "smoke_run": false,
+  "metadata_source": "C:\\Users\\Raisa Shahira\\Documents\\UI\\Capstone Design\\SEHAT-Smart-Electronic-based-Hydration-Analysis-and-Tracking\\dataset_final_features.csv",
+  "output_csv": "C:\\Users\\Raisa Shahira\\Documents\\UI\\Capstone Design\\SEHAT-Smart-Electronic-based-Hydration-Analysis-and-Tracking\\dataset_final_features_reprocessed.csv",
+  "scope": {
+    "baseline_recordings": 112,
+    "selected_recordings": 112,
+    "raw_recordings": 124,
+    "raw_recordings_outside_baseline": [
+      "20210424165256April24_16_52_fasting.csv",
+      "20210425081128April25_08_11_fasting.csv",
+      "20210922053804Sep22_15_27_notfasting.csv",
+      "20211014211336oct14-afteriftar_2113.csv",
+      "20211020205458oct20_nonfast_1724.csv",
+      "20211021135237oct21_nonfast_1111.csv",
+      "20211029145533oct29_nonfast_1132.csv",
+      "20211204093506fasting_S4_20211203230000.csv",
+      "20211204100216fasting20211203230000_S5.csv",
+      "20211208113238nonfasting_S8.csv",
+      "20211211094648fasting_S4_20211211003000.csv",
+      "20211211100610fasting_S5_20211211000000.csv"
+    ],
+    "policy": "Only recordings represented in the baseline table are processed; labels are copied unchanged, including missing nonfasting fasting_duration_hr."
+  },
+  "sample_rate_hz": 51.2,
+  "preprocessing_config": {
+    "low_motion_cutoff_hz": 4.0,
+    "high_motion_cutoff_hz": 2.5,
+    "baseline_cutoff_hz": 0.5,
+    "filter_order": 4,
+    "motion_window_sec": 1.0,
+    "smooth_window_sec": 0.15,
+    "blend_window_sec": 0.25,
+    "max_gap_sec": 0.25
+  },
+  "window_seconds": 30.0,
+  "overlap": 0.5,
+  "baseline_windows_in_scope": 12821,
+  "file_audits": [],
+  "file_failures": [
+    {
+      "file": "20210408100028Apr8_10_00_fasting.csv",
+      "error_type": "ModuleNotFoundError",
+      "error": "No module named 'heartpy'"
+    }
+  ],
+  "elapsed_seconds": 2.249
+}
