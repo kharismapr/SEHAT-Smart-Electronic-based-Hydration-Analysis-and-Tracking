@@ -1,0 +1,127 @@
+{
+  "started_utc": "2026-09-19T07:13:22.898648+00:00",
+  "complete": true,
+  "smoke_run": true,
+  "metadata_source": "C:\\Users\\Raisa Shahira\\Documents\\UI\\Capstone Design\\SEHAT-Smart-Electronic-based-Hydration-Analysis-and-Tracking\\dataset_final_features.csv",
+  "output_csv": "C:\\Users\\Raisa Shahira\\Documents\\UI\\Capstone Design\\SEHAT-Smart-Electronic-based-Hydration-Analysis-and-Tracking\\artifacts\\ppg\\features_preview.csv",
+  "scope": {
+    "baseline_recordings": 112,
+    "selected_recordings": 2,
+    "raw_recordings": 124,
+    "raw_recordings_outside_baseline": [
+      "20210424165256April24_16_52_fasting.csv",
+      "20210425081128April25_08_11_fasting.csv",
+      "20210922053804Sep22_15_27_notfasting.csv",
+      "20211014211336oct14-afteriftar_2113.csv",
+      "20211020205458oct20_nonfast_1724.csv",
+      "20211021135237oct21_nonfast_1111.csv",
+      "20211029145533oct29_nonfast_1132.csv",
+      "20211204093506fasting_S4_20211203230000.csv",
+      "20211204100216fasting20211203230000_S5.csv",
+      "20211208113238nonfasting_S8.csv",
+      "20211211094648fasting_S4_20211211003000.csv",
+      "20211211100610fasting_S5_20211211000000.csv"
+    ],
+    "policy": "Only recordings represented in the baseline table are processed; labels are copied unchanged, including missing nonfasting fasting_duration_hr."
+  },
+  "sample_rate_hz": 51.2,
+  "window_seconds": 30.0,
+  "overlap": 0.5,
+  "baseline_windows_in_scope": 525,
+  "file_audits": [
+    {
+      "file": "20210408100028Apr8_10_00_fasting.csv",
+      "subject_id": "S1",
+      "session_type": "fasting",
+      "raw_samples": 388976,
+      "retained_samples": 388976,
+      "window_covered_samples": 388976,
+      "finite_cleaned_samples": 388976,
+      "missing_ppg_samples": 0,
+      "interpolated_ppg_samples": 0,
+      "missing_gyro_samples": 0,
+      "timing_gap_samples": 18,
+      "high_motion_samples": 104657,
+      "expected_windows": 506,
+      "retained_windows": 506,
+      "partial_tail_windows": 1,
+      "baseline_windows": 505,
+      "available_legacy_ppg_features": 454,
+      "heartpy_valid_windows": 454,
+      "status_counts": {
+        "review_rr_rejections": 454,
+        "timing_gap": 30,
+        "insufficient_valid_beats": 14,
+        "heartpy_failed": 8
+      },
+      "cleaned_recording": "C:\\Users\\Raisa Shahira\\Documents\\UI\\Capstone Design\\SEHAT-Smart-Electronic-based-Hydration-Analysis-and-Tracking\\artifacts\\ppg\\cleaned\\S1\\fasting\\20210408100028Apr8_10_00_fasting.npz"
+    },
+    {
+      "file": "20210413094911Apr13_09_49_fasting.csv",
+      "subject_id": "S1",
+      "session_type": "fasting",
+      "raw_samples": 16760,
+      "retained_samples": 16760,
+      "window_covered_samples": 16760,
+      "finite_cleaned_samples": 16760,
+      "missing_ppg_samples": 0,
+      "interpolated_ppg_samples": 0,
+      "missing_gyro_samples": 1,
+      "timing_gap_samples": 1,
+      "high_motion_samples": 4807,
+      "expected_windows": 21,
+      "retained_windows": 21,
+      "partial_tail_windows": 1,
+      "baseline_windows": 20,
+      "available_legacy_ppg_features": 18,
+      "heartpy_valid_windows": 18,
+      "status_counts": {
+        "review_rr_rejections": 16,
+        "timing_gap": 2,
+        "ok": 2,
+        "heartpy_failed": 1
+      },
+      "cleaned_recording": "C:\\Users\\Raisa Shahira\\Documents\\UI\\Capstone Design\\SEHAT-Smart-Electronic-based-Hydration-Analysis-and-Tracking\\artifacts\\ppg\\cleaned\\S1\\fasting\\20210413094911Apr13_09_49_fasting.npz"
+    }
+  ],
+  "file_failures": [],
+  "comparison_plot": {
+    "file": "20210413094911Apr13_09_49_fasting.csv",
+    "start_sec": 246.07421875,
+    "path": "C:\\Users\\Raisa Shahira\\Documents\\UI\\Capstone Design\\SEHAT-Smart-Electronic-based-Hydration-Analysis-and-Tracking\\artifacts\\ppg\\ppg_comparison.png"
+  },
+  "elapsed_seconds": 16.692,
+  "completed_utc": "2026-09-19T07:13:39.590590+00:00",
+  "total_raw_samples": 405736,
+  "total_retained_samples": 405736,
+  "total_expected_windows": 527,
+  "total_retained_windows": 527,
+  "heartpy_valid_windows": 472,
+  "status_counts": {
+    "review_rr_rejections": 470,
+    "timing_gap": 32,
+    "insufficient_valid_beats": 14,
+    "heartpy_failed": 9,
+    "ok": 2
+  },
+  "before_after": {
+    "matching": "file and window_id; preserving formerly missing sensor rows can shift exact window boundaries",
+    "availability_definition": "mean_hr, rmssd, sdnn and pnn50 are all finite",
+    "matched_windows": 525,
+    "available_before_matched": 126,
+    "available_after_matched": 472,
+    "unavailable_before_available_after": 355,
+    "available_before_unavailable_after": 9,
+    "unavailable_both": 44,
+    "baseline_windows_without_matching_new_id": 0,
+    "new_windows_without_baseline_id": 2,
+    "unmatched_new_partial_tails": 2,
+    "unmatched_new_full_windows": 0,
+    "unmatched_new_available": 0,
+    "unmatched_new_status_counts": {
+      "timing_gap": 1,
+      "heartpy_failed": 1
+    },
+    "interpretation": "Feature availability is not a measurement of denoising accuracy or physiological correctness."
+  }
+}
