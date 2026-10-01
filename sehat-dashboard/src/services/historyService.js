@@ -1,18 +1,19 @@
 /**
- * SEHAT History Service (Storage Abstraction Layer)
+ * SEHAT History Service (Storage & API Abstraction Layer)
  * 
- * Future Development Note:
- * If migrating to a real database (SQLite, PostgreSQL, Supabase, Firebase, or an ESP32 backend API),
- * you only need to change the implementation within this file.
+ * Manages synchronization between SQLite Backend (http://localhost:5000/api/measurements)
+ * and LocalStorage fallback.
  */
 import { STORAGE_KEYS } from '../constants/config';
 
+const API_BASE_URL = 'http://localhost:5000/api';
+
 export const HistoryService = {
   /**
-   * Retrieves all saved measurement records.
+   * Retrieves all saved measurement records from local cache.
    * @returns {Array<object>} List of measurement records (newest first)
    */
-  getAll() {
+  getAllLocal() {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.MEASUREMENT_HISTORY);
       if (!data) return [];
@@ -25,41 +26,88 @@ export const HistoryService = {
   },
 
   /**
-   * Saves a new measurement record.
+   * Synchronous accessor for initial UI render
+   */
+  getAll() {
+    return this.getAllLocal();
+  },
+
+  /**
+   * Fetches latest measurements from SQLite Backend API, falls back to LocalStorage.
+   * @returns {Promise<Array<object>>}
+   */
+  async fetchAllRemote() {
+    try {
+      const response = await fetch(`${API_BASE_URL}/measurements?limit=200`, {
+        signal: AbortSignal.timeout(2000)
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const result = await response.json();
+      if (result.success && Array.isArray(result.data)) {
+        // Cache to local storage
+        localStorage.setItem(STORAGE_KEYS.MEASUREMENT_HISTORY, JSON.stringify(result.data));
+        return result.data;
+      }
+    } catch (err) {
+      console.warn('Backend server not reachable, using local storage cache:', err.message);
+    }
+    return this.getAllLocal();
+  },
+
+  /**
+   * Saves a new measurement record both locally and to SQLite backend.
    * @param {object} record - Telemetry reading
    * @returns {Array<object>} The updated list of records
    */
   save(record) {
     try {
-      const current = this.getAll();
-      // Ensure record has unique ID and timestamp
+      const current = this.getAllLocal();
       const newEntry = {
-        id: record.id || `rec_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
+        id: record.id || `meas_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
         timestamp: record.timestamp || Date.now(),
         bpm: Number(record.bpm),
         gsr: Number(record.gsr),
         temperature: Number(record.temperature),
         humidity: Number(record.humidity),
         hoursSinceHydration: Number(record.hoursSinceHydration),
-        statusKey: record.hoursSinceHydration > 10 ? 'AT_RISK' : 'WELL_HYDRATED',
+        predictedHoursSinceHydration: Number(record.hoursSinceHydration),
+        statusKey: record.statusKey || (Number(record.hoursSinceHydration) > 10 ? 'AT_RISK' : 'WELL_HYDRATED'),
+        notes: record.notes || null
       };
 
-      // Keep up to 200 most recent records to prevent unbounded browser memory usage
+      // 1. Update local cache immediately
       const updated = [newEntry, ...current].slice(0, 200);
       localStorage.setItem(STORAGE_KEYS.MEASUREMENT_HISTORY, JSON.stringify(updated));
+
+      // 2. Fire and forget sync to SQLite backend
+      fetch(`${API_BASE_URL}/measurements`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newEntry)
+      }).catch(err => {
+        console.warn('Could not sync measurement to SQLite backend:', err.message);
+      });
+
       return updated;
     } catch (err) {
       console.error('Failed to save measurement record:', err);
-      return this.getAll();
+      return this.getAllLocal();
     }
   },
 
   /**
-   * Clears all measurement history.
+   * Clears all measurement history locally and in SQLite backend.
    */
   clear() {
     try {
       localStorage.removeItem(STORAGE_KEYS.MEASUREMENT_HISTORY);
+
+      fetch(`${API_BASE_URL}/measurements`, {
+        method: 'DELETE'
+      }).catch(err => {
+        console.warn('Could not clear remote measurements on SQLite backend:', err.message);
+      });
+
       return [];
     } catch (err) {
       console.error('Failed to clear measurement history:', err);
@@ -71,7 +119,7 @@ export const HistoryService = {
    * Seeds realistic demo telemetry history if empty.
    */
   seedSampleDataIfEmpty() {
-    const existing = this.getAll();
+    const existing = this.getAllLocal();
     if (existing.length > 0) return existing;
 
     const sampleData = [];
@@ -94,7 +142,9 @@ export const HistoryService = {
         temperature,
         humidity,
         hoursSinceHydration: parseFloat(hoursSinceHydration),
+        predictedHoursSinceHydration: parseFloat(hoursSinceHydration),
         statusKey: parseFloat(hoursSinceHydration) > 10 ? 'AT_RISK' : 'WELL_HYDRATED',
+        notes: 'Initial synthetic seed calibration'
       });
     }
 
