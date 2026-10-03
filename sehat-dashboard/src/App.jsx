@@ -1,26 +1,27 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useSehatTelemetry } from './hooks/useSehatTelemetry';
-import { Sidebar } from './components/layout/Sidebar';
 import { VitalStatusBanner } from './components/telemetry/VitalStatusBanner';
 import { SensorGrid } from './components/telemetry/SensorGrid';
 import { MeasurementTrigger } from './components/telemetry/MeasurementTrigger';
-import { TelemetryChart } from './components/charts/TelemetryChart';
 import { HistoryTable } from './components/history/HistoryTable';
 import { exportToCSVString } from './utils/calculations';
+import { Radio, Battery, BatteryMedium, BatteryLow } from 'lucide-react';
 
+/**
+ * SEHAT Single-Page All-in-One Dashboard
+ * Palette: #054867 (Deep Ocean), #1081b7 (Vibrant Azure), #83c4e2 (Soft Sky), White
+ */
 export default function App() {
-  const [activeTab, setActiveTab] = useState('dashboard'); // 'dashboard' | 'history'
-  
-  // Device hardware state (Ready to link to Web Bluetooth / Serial API later)
-  const [connectionStatus, setConnectionStatus] = useState('Connected'); // 'Connected' | 'Connecting' | 'Disconnected'
-  const [batteryLevel, setBatteryLevel] = useState(84); // Wearable battery percentage
+  // Device hardware status
+  const connectionStatus = 'Connected';
+  const batteryLevel = 84;
 
   const {
     rawSensors,
-    liveInference,
     latestResult,
     history,
     isMeasuring,
+    isInferring,
     measurementProgress,
     secondsRemaining,
     startMeasurement,
@@ -41,81 +42,106 @@ export default function App() {
     document.body.removeChild(link);
   };
 
-  const displayHours = latestResult
-    ? latestResult.hoursSinceHydration
-    : liveInference.hoursSinceHydration;
+  const getBatteryIcon = (level) => {
+    if (level <= 20) return <BatteryLow className="w-4 h-4 text-amber-500" />;
+    if (level <= 60) return <BatteryMedium className="w-4 h-4 text-[#1081b7]" />;
+    return <Battery className="w-4 h-4 text-[#1081b7]" />;
+  };
+
+  const displayHours = latestResult ? latestResult.hoursSinceHydration : null;
+  const currentSensorDisplay = isMeasuring ? rawSensors : (latestResult || rawSensors);
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col lg:flex-row antialiased">
-      {/* 1. Sidebar Navigation with Connection & Battery Status */}
-      <Sidebar
-        activeTab={activeTab}
-        onSelectTab={setActiveTab}
-        historyCount={history.length}
-        connectionStatus={connectionStatus}
-        batteryLevel={batteryLevel}
-      />
-
-      {/* 2. Main Content Workspace */}
-      <div className="flex-1 flex flex-col min-w-0">
-        <header className="border-b border-slate-200 bg-white px-6 py-4 flex items-center justify-between sticky top-0 z-40">
-          <div>
-            <h2 className="text-base font-extrabold text-slate-900">
-              {activeTab === 'dashboard' ? 'Measurement' : 'History'}
-            </h2>
-            <p className="text-xs text-slate-500 font-medium">
-              {activeTab === 'dashboard'
-                ? 'SEHAT Hydration Analysis'
-                : 'Measurement records'}
+    <div className="min-h-screen bg-[#f4f8fa] text-[#054867] flex flex-col antialiased">
+      {/* 1. Sleek Top Navigation Bar */}
+      <header
+        className="w-full text-white shadow-md sticky top-0 z-50 px-6 lg:px-12 py-4 flex items-center justify-between border-b border-[#83c4e2]/30"
+        style={{
+          background: 'linear-gradient(90deg, #054867 0%, #1081b7 100%)'
+        }}
+      >
+        <div className="flex items-center gap-3">
+          <div className="space-y-0.5">
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl lg:text-2xl font-black tracking-tight text-white font-sans">
+                SEHAT
+              </h1>
+              <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-white/15 border border-white/25 text-[#83c4e2]">
+                Dashboard
+              </span>
+            </div>
+            <p className="text-[11px] text-[#83c4e2] font-medium tracking-wide">
+              Smart Electronic-based Hydration Analysis & Tracking
             </p>
           </div>
-        </header>
+        </div>
 
-        <main className="p-6 lg:p-8 space-y-6 max-w-5xl">
-          {activeTab === 'dashboard' ? (
-            <>
-              {/* Start Measurement Trigger */}
-              <MeasurementTrigger
-                isMeasuring={isMeasuring}
-                measurementProgress={measurementProgress}
-                secondsRemaining={secondsRemaining}
-                onStart={startMeasurement}
-              />
+        {/* Live Hardware Telemetry Status */}
+        <div className="flex items-center gap-2.5 sm:gap-3">
+          {/* Connection Status Pill */}
+          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-white/10 border border-white/20 backdrop-blur-md text-white shadow-xs">
+            <span className="w-2 h-2 rounded-full bg-[#83c4e2] shadow-[0_0_8px_#83c4e2]" />
+            <span className="hidden sm:inline">{connectionStatus}</span>
+            <Radio className="w-3.5 h-3.5 text-[#83c4e2]" />
+          </div>
 
-              {/* Classification & Hours Since Hydration Banner */}
-              <section className="space-y-2">
-                <VitalStatusBanner
-                  hoursSinceHydration={displayHours}
-                />
-              </section>
+          {/* Battery Status Pill */}
+          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono font-bold bg-white/10 border border-white/20 backdrop-blur-md text-white shadow-xs">
+            {getBatteryIcon(batteryLevel)}
+            <span>{batteryLevel}%</span>
+          </div>
+        </div>
+      </header>
 
-              {/* Raw Sensor Feeds */}
-              <section className="space-y-2">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                  Raw Sensor Data
-                </h3>
-                <SensorGrid reading={latestResult ? latestResult : rawSensors} />
-              </section>
-            </>
-          ) : (
-            <>
-              {/* History Chart */}
-              <section>
-                <TelemetryChart history={history} />
-              </section>
+      {/* 2. Main Single-Page Workspace */}
+      <main className="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+        
+        {/* Sampling Trigger Protocol */}
+        <section>
+          <MeasurementTrigger
+            isMeasuring={isMeasuring}
+            isInferring={isInferring}
+            measurementProgress={measurementProgress}
+            secondsRemaining={secondsRemaining}
+            onStart={startMeasurement}
+          />
+        </section>
 
-              {/* History Table */}
-              <section>
-                <HistoryTable
-                  history={history}
-                  onClear={clearHistory}
-                  onExport={handleExportCSV}
-                />
-              </section>
-            </>
-          )}
-        </main>
-      </div>
+        {/* Prediction Target & Classification Status Banner */}
+        <section className="space-y-2">
+          <VitalStatusBanner
+            hoursSinceHydration={displayHours}
+            isMeasuring={isMeasuring}
+            isInferring={isInferring}
+          />
+        </section>
+
+        {/* Multisensor Data Stream Grid */}
+        <section className="space-y-2">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-[#054867]/60">
+            Multisensor Live Streams
+          </h3>
+          <SensorGrid
+            reading={currentSensorDisplay}
+            isLive={isMeasuring}
+          />
+        </section>
+
+        {/* Specimen History Table directly below */}
+        <section className="pt-2">
+          <HistoryTable
+            history={history}
+            onClear={clearHistory}
+            onExport={handleExportCSV}
+          />
+        </section>
+
+      </main>
+
+      {/* 3. Subtle Footer */}
+      <footer className="border-t border-[#83c4e2]/30 py-4 text-center text-xs text-[#054867]/60 bg-white/60">
+        SEHAT System • Edge Biosignal Intelligence & Hydration Ingestion Pipeline
+      </footer>
     </div>
   );
 }
