@@ -172,8 +172,8 @@ void addSensorSample(float ir, const GyroAxes& gyro_axes) {
 void setup() {
   Serial.begin(115200);
   Wire.begin(kSdaPin, kSclPin);
-  Wire.setClock(400000);
-  if (!max30102.begin(Wire, I2C_SPEED_FAST)) {
+  Wire.setClock(100000);
+  if (!max30102.begin(Wire, I2C_SPEED_STANDARD)) {
     Serial.println("MAX30102 tidak ditemukan. Periksa SDA, SCL, 3V3, GND.");
     while (true) delay(1000);
   }
@@ -194,40 +194,59 @@ void setup() {
 }
 
 void loop() {
-  while (Serial.available()) {
-    const char command = static_cast<char>(Serial.read());
-    if (command == 'r' || command == 'R') resetRecording("Recording reset.");
-    if (command == 'f' || command == 'F') {
-      sehat_ppg::Features tail;
-      if (ppg.flush(tail)) printFeatures(tail);
-      resetRecording("Partial tail emitted; new recording started.");
-    }
+
+  static uint32_t lastDebug = millis();
+  static uint32_t sampleCount = 0;
+  static uint32_t lastSampleTime = 0;
+  static uint32_t lastIR = 0;
+  static uint32_t maxGap = 0;
+  static uint32_t fifoBacklogs = 0;
+
+  // Baca FIFO MAX30102
+  uint16_t readCount = max30102.check();
+
+  if (readCount > 3) {
+    fifoBacklogs++;
+    resetRecording("FIFO backlog terdeteksi");
   }
 
-  const uint16_t read_count = max30102.check();
-  // SparkFun's in-memory FIFO has only four slots. More than three new
-  // samples can overwrite data before it is consumed; never stitch that gap.
-  if (read_count > 3) {
-    resetRecording("FIFO backlog: samples lost, window reset.");
-    return;
-  }
-  if (!read_count && have_previous && millis() - last_raw_ms > 100) {
-    resetRecording("PPG timing gap >100 ms, window reset.");
-    return;
-  }
-  if (!max30102.available()) { delay(1); return; }
-
+  // Proses sampel yang tersedia
   while (max30102.available()) {
-    const uint32_t ir_counts = max30102.getFIFOIR();
+    uint32_t ir = max30102.getFIFOIR();
     max30102.nextSample();
-    const uint32_t now = millis();
-    if (have_previous && now - last_raw_ms > 100) {
-      resetRecording("PPG timing gap >100 ms, window reset.");
-      return;
+
+    uint32_t now = millis();
+
+    if (lastSampleTime != 0) {
+      uint32_t gap = now - lastSampleTime;
+      if (gap > maxGap) maxGap = gap;
     }
-    last_raw_ms = now;
-    const float ir = ir_counts == 0 || ir_counts >= 0x3FFFF
-        ? NAN : static_cast<float>(ir_counts);
-    addSensorSample(ir, readGyroAxes());
+
+    lastSampleTime = now;
+    lastIR = ir;
+    sampleCount++;
+
+    // Kirim data ke preprocessing
+    addSensorSample(
+      ir == 0 || ir >= 0x3FFFF ? NAN : (float)ir,
+      readGyroAxes()
+    );
   }
+
+  // Debug setiap 1 detik
+  if (millis() - lastDebug >= 1000) {
+    Serial.printf(
+      "DEBUG | Samples=%lu | IR=%lu | MaxGap=%lu ms | FIFO_backlog=%lu\n",
+      (unsigned long)sampleCount,
+      (unsigned long)lastIR,
+      (unsigned long)maxGap,
+      (unsigned long)fifoBacklogs
+    );
+
+    sampleCount = 0;
+    maxGap = 0;
+    lastDebug = millis();
+  }
+
+  delay(1);
 }
