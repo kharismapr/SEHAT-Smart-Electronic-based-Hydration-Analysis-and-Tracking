@@ -22,7 +22,8 @@ sensor GSR; cocokkan dengan sensor dan ADC yang benar-benar terpasang.
 1. Kumpulkan 1536 sampel (30 detik); setelah itu keluarkan fitur setiap 768
    sampel (overlap 50%). Pada akhir rekaman, `flush()` mengeluarkan sisa window.
 2. Ganti NaN/Inf dengan interpolasi linear; gap pada tepi memakai nilai valid
-   terdekat. Jika semua sampel hilang, `valid == false` dan fitur tetap NaN.
+   terdekat. Jika semua sampel hilang atau sinyal konstan, `valid == false`
+   dan fitur tetap NaN.
 3. Terapkan Butterworth low-pass orde 2, cutoff 1 Hz, dua arah dengan odd
    padding seperti `scipy.signal.filtfilt`. Window paling banyak 9 sampel tidak
    difilter, sesuai fungsi di notebook.

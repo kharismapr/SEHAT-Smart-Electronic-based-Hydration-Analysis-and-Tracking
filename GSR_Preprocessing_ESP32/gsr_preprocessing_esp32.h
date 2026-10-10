@@ -1,6 +1,6 @@
 #pragma once
 
-// GSR feature extraction for ESP32 (Arduino C++), matching TRAIN_SEHAT_FINAL.ipynb.
+// GSR feature extraction for ESP32, matching the reprocessed training dataset.
 // Input: calibrated skin conductance in microsiemens (uS), sampled at 51.2 Hz.
 // This is a windowed, zero-phase filter: features are available after a window
 // has been collected. Do not pass uncalibrated ADC counts or resistance here.
@@ -144,6 +144,16 @@ inline bool extractFeatures(const float* conductance_us, size_t count,
   for (size_t i = previous + 1; i < count; ++i)
     work[offset + i] = work[offset + previous];
 
+  // A stuck/constant sensor has no meaningful histogram range. NumPy's
+  // histogram can fail on the tiny filtfilt roundoff spread of such a signal;
+  // reject it instead of passing an arbitrary entropy to the model.
+  double raw_min = work[offset], raw_max = work[offset];
+  for (size_t i = 1; i < count; ++i) {
+    if (work[offset + i] < raw_min) raw_min = work[offset + i];
+    if (work[offset + i] > raw_max) raw_max = work[offset + i];
+  }
+  if (raw_min == raw_max) return false;
+
   if (do_filter) {
     // scipy.signal.filtfilt(..., padtype="odd", padlen=9):
     // reflect nine samples about each endpoint, then filter forward/backward.
@@ -209,7 +219,7 @@ class Processor {
                  (kWindowSamples - kHopSamples) * sizeof(samples_[0]));
     count_ = kWindowSamples - kHopSamples;
     new_samples_ = 0;
-    return true;  // out.valid is false if all readings were missing.
+    return true;  // out.valid is false for all-missing or constant readings.
   }
 
   // Call once at the end of a recording to emit its uncovered partial tail.
