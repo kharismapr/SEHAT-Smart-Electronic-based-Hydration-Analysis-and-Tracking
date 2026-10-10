@@ -43,6 +43,12 @@ float readGsrUs() {
       ? 1000000.0f / resistance_ohm : NAN;
 }
 
+void clearPpgBuffer() {
+  while (max30102.available()) {
+    max30102.nextSample();
+  }
+}
+
 void resetRecording(const char* reason) {
   active = false;
   acquisition_enabled = false;
@@ -51,7 +57,7 @@ void resetRecording(const char* reason) {
   gsr_produced = ppg_produced = paired = raw_index = 0;
   previous_ir = NAN;
   previous_gyro = {NAN, NAN, NAN};
-  max30102.clearFIFO();
+  clearPpgBuffer();
   Serial.println(reason);
 }
 
@@ -71,8 +77,10 @@ void reportWindow(const sehat_gsr::Features& g,
     return;
   }
   Serial.printf("Window %lu: experimental S1 fasting-duration estimate = %.3f hours; "
-                "PPG available=%u; GSR interpolated=%u/%u; PPG status=%s\n",
+                "HR=%.1f; GSR_mean=%.4f; RMSSD=%.1f; PPG available=%u; "
+                "GSR interpolated=%u/%u; PPG status=%s\n",
                 static_cast<unsigned long>(window_number), hours,
+                p.mean_hr, g.gsr_mean, p.rmssd,
                 static_cast<unsigned>(input[sehat_s1::ppg_available]),
                 static_cast<unsigned>(g.interpolated_samples),
                 static_cast<unsigned>(g.window_samples),
@@ -210,7 +218,7 @@ void setup() {
     Serial.println("MAX30102 not detected.");
     while (true) delay(1000);
   }
-  max30102.setup(0x1F, 1, 2, kSensorHz, 411, 4096);
+  max30102.setup(0x24, 1, 2, kSensorHz, 411, 4096);
   max30102.disableFIFORollover();
   Serial.println(sehat_gyro::begin() ? "MPU-9250 ready." :
                  "MPU-9250 unavailable; using low-motion PPG filter.");
@@ -219,12 +227,49 @@ void setup() {
   Serial.println("Model output: predicted fasting duration in hours (S1 only).");
 }
 
+// Real-time instantaneous PPG beat detector for live dashboard streaming
+static float live_bpm = 0.0f;
+static float ppg_prev_filtered = 0.0f;
+static bool ppg_rising = false;
+static uint32_t last_peak_time_ms = 0;
+
+void trackLiveHeartbeat(float ir_val) {
+  if (ir_val < 50000.0f) {
+    live_bpm = 0.0f;
+    return;
+  }
+  static float dc_estimate = 100000.0f;
+  dc_estimate = 0.95f * dc_estimate + 0.05f * ir_val;
+  float ac_val = ir_val - dc_estimate;
+
+  static float ac_smoothed = 0.0f;
+  ac_smoothed = 0.7f * ac_smoothed + 0.3f * ac_val;
+
+  uint32_t now_ms = millis();
+  if (ac_smoothed > ppg_prev_filtered && !ppg_rising) {
+    ppg_rising = true;
+  } else if (ac_smoothed < ppg_prev_filtered && ppg_rising) {
+    ppg_rising = false;
+    if (ppg_prev_filtered > 20.0f) {
+      uint32_t interval = now_ms - last_peak_time_ms;
+      if (interval >= 300 && interval <= 1800) { // 33 to 200 BPM
+        float instant_bpm = 60000.0f / static_cast<float>(interval);
+        if (live_bpm <= 0.0f) live_bpm = instant_bpm;
+        else live_bpm = 0.7f * live_bpm + 0.3f * instant_bpm;
+      }
+      last_peak_time_ms = now_ms;
+    }
+  }
+  ppg_prev_filtered = ac_smoothed;
+}
+
 void loop() {
   while (Serial.available()) {
     const char command = static_cast<char>(Serial.read());
     if (command == 'c' || command == 'C') calibrateWithoutFingers();
     else if (command == 's' || command == 'S') {
       if (std::isfinite(calibration_adc10)) {
+        clearPpgBuffer();
         resetRecording("Starting a new calibrated recording.");
         acquisition_enabled = true;
       } else Serial.println("Calibrate GSR with 'c' before starting.");
@@ -233,24 +278,52 @@ void loop() {
     else if (command == 'r' || command == 'R')
       resetRecording("Recording reset; GSR calibration retained.");
   }
-  if (!std::isfinite(calibration_adc10) || !acquisition_enabled) return;
 
-  if (active) sampleGsrDue();
-  if (active && millis() - last_ppg_ms > 250) {
-    resetRecording("PPG sample timeout; recording reset.");
-    return;
-  }
+  static uint32_t latest_ir_reading = 0;
   const uint16_t received = max30102.check();
-  if (received >= 32) {
-    resetRecording("MAX30102 FIFO overflow risk; recording reset.");
-    return;
+
+  if (acquisition_enabled && std::isfinite(calibration_adc10)) {
+    if (active) sampleGsrDue();
+    if (active && millis() - last_ppg_ms > 250) {
+      resetRecording("PPG sample timeout; recording reset.");
+    } else if (received >= 32 && active) {
+      clearPpgBuffer();
+      resetRecording("MAX30102 FIFO overflow risk; recording reset.");
+    } else {
+      while (max30102.available()) {
+        if (active) sampleGsrDue();
+        const uint32_t ir = max30102.getFIFOIR();
+        latest_ir_reading = ir;
+        trackLiveHeartbeat(static_cast<float>(ir));
+        max30102.nextSample();
+        addSensorSample(ir == 0 || ir >= 0x3FFFF ? NAN : static_cast<float>(ir),
+                        sehat_gyro::read());
+        if (active) sampleGsrDue();
+      }
+    }
+  } else {
+    // In idle / uncalibrated mode, drain MAX30102 FIFO to keep live IR updated and prevent FIFO overflow
+    while (max30102.available()) {
+      const uint32_t ir = max30102.getFIFOIR();
+      if (ir > 0) {
+        latest_ir_reading = ir;
+        trackLiveHeartbeat(static_cast<float>(ir));
+      }
+      max30102.nextSample();
+    }
   }
-  while (max30102.available()) {
-    if (active) sampleGsrDue();
-    const uint32_t ir = max30102.getFIFOIR();
-    max30102.nextSample();
-    addSensorSample(ir == 0 || ir >= 0x3FFFF ? NAN : static_cast<float>(ir),
-                    sehat_gyro::read());
-    if (active) sampleGsrDue();
+
+  // Periodic 500ms live stream telemetry for dashboard gauges
+  static uint32_t last_live_status_ms = 0;
+  if (millis() - last_live_status_ms >= 500) {
+    last_live_status_ms = millis();
+    float current_gsr = readGsrUs();
+    bool finger_present = (latest_ir_reading > 50000);
+    Serial.printf("LIVE | GSR_us=%.4f | BPM=%.1f | IR=%lu | PPG=%s | Active=%d\n",
+                  std::isfinite(current_gsr) ? current_gsr : 0.0f,
+                  live_bpm > 35.0f && live_bpm < 220.0f ? live_bpm : 0.0f,
+                  latest_ir_reading,
+                  finger_present ? "FINGER_DETECTED" : "NO_FINGER",
+                  active ? 1 : 0);
   }
 }

@@ -18,7 +18,7 @@ export const SensorMetricCard = ({
         </p>
         {Icon && (
           <div className="p-2 rounded-xl bg-[#f0f7fb] border border-[#83c4e2]/60 text-[#1081b7]">
-            <Icon className="w-4 h-4" />
+            <Icon className="w-4 h-4 text-[#1081b7]" />
           </div>
         )}
       </div>

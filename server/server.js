@@ -11,6 +11,21 @@ app.use(express.json());
 // Seed sample records on initial start if empty
 MeasurementRepository.seedDemoDataIfEmpty();
 
+// Ephemeral in-memory live sensor stream (does NOT write to SQLite DB)
+let liveTelemetry = {
+  bpm: 72,
+  gsr: 9.5,
+  temperature: 36.5,
+  humidity: 55,
+  rmssd: 32,
+  predictedHours: null,
+  isLive: false,
+  timestamp: Date.now()
+};
+
+// Device Command Queue (e.g. 'c' = calibrate, 's' = start, 'f' = flush, 'r' = reset)
+let pendingCommands = [];
+
 // Health Check
 app.get('/api/health', (req, res) => {
   res.json({
@@ -19,6 +34,51 @@ app.get('/api/health', (req, res) => {
     database: 'SQLite (WAL Mode)',
     time: new Date().toISOString()
   });
+});
+
+// GET /api/telemetry/live (Current live sensor state for UI gauges)
+app.get('/api/telemetry/live', (req, res) => {
+  const ageMs = Date.now() - liveTelemetry.timestamp;
+  res.json({
+    success: true,
+    data: {
+      ...liveTelemetry,
+      isLive: ageMs < 5000 // Active if updated within last 5 seconds
+    }
+  });
+});
+
+// POST /api/telemetry/live (Streamed from Bridge every 250ms, no DB write)
+app.post('/api/telemetry/live', (req, res) => {
+  const { bpm, gsr, temperature, humidity, rmssd, predictedHours } = req.body;
+  liveTelemetry = {
+    bpm: Number(bpm ?? liveTelemetry.bpm),
+    gsr: Number(gsr ?? liveTelemetry.gsr),
+    temperature: Number(temperature ?? liveTelemetry.temperature),
+    humidity: Number(humidity ?? liveTelemetry.humidity),
+    rmssd: Number(rmssd ?? liveTelemetry.rmssd),
+    predictedHours: predictedHours != null ? Number(predictedHours) : liveTelemetry.predictedHours,
+    isLive: true,
+    timestamp: Date.now()
+  };
+  res.json({ success: true, data: liveTelemetry });
+});
+
+// POST /api/device/command (Send 'c', 's', 'f', 'r' from dashboard)
+app.post('/api/device/command', (req, res) => {
+  const { command } = req.body;
+  if (!command) {
+    return res.status(400).json({ success: false, error: 'Command required' });
+  }
+  pendingCommands.push(command.toString());
+  console.log(`[Device Command Received from UI] -> '${command}'`);
+  res.json({ success: true, message: `Command '${command}' queued` });
+});
+
+// GET /api/device/command (Polled by serial bridge to execute on ESP32)
+app.get('/api/device/command', (req, res) => {
+  const command = pendingCommands.shift() || null;
+  res.json({ success: true, command });
 });
 
 // GET all measurements

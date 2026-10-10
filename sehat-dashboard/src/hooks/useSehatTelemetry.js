@@ -5,30 +5,32 @@ import { estimateHoursSinceHydration, classifyHydration } from '../utils/calcula
 /**
  * Custom Hook: useSehatTelemetry
  * 
- * Multi-stage Measurement Protocol:
- * 1. Idle: Displays latest saved specimen or ready state.
- * 2. Sampling (5s): Live PPG, GSR, Temp, Humidity streams appear immediately on screen.
- *    Prediction target is in placeholder state ('--').
- * 3. ML Inference (800ms): Sensor features are locked; ML pipeline processes the features.
- * 4. Completed: Prediction output (hours since hydration & classification) is revealed.
+ * Clinical Hardware & Session Control:
+ * - 'c': Calibrate Grove GSR open-circuit baseline
+ * - 's': Start 30-second continuous acquisition
+ * - 'f': Flush partial window buffer and calculate features
+ * - 'r': Reset recording state
  */
-export const SAMPLING_DURATION_SEC = 5;
+export const CLINICAL_WINDOW_SEC = 30;
 
 export function useSehatTelemetry() {
-  // Live biosignal telemetry feeds
+  // Live biosignal telemetry feeds (ephemeral display only, updates gauges)
   const [rawSensors, setRawSensors] = useState({
     bpm: 72,
     gsr: 9.5,
     temperature: 36.5,
-    humidity: 55
+    humidity: 55,
+    rmssd: 32,
+    predictedHours: null,
+    isLive: false
   });
 
-  // State of measurement session: 'idle' | 'sampling' | 'inferring'
-  const [measurementPhase, setMeasurementPhase] = useState('idle');
-  const [measurementProgress, setMeasurementProgress] = useState(0); // 0 to 100%
-  const [secondsRemaining, setSecondsRemaining] = useState(SAMPLING_DURATION_SEC);
+  // State of measurement session
+  const [measurementPhase, setMeasurementPhase] = useState('idle'); // 'idle' | 'sampling' | 'inferring'
+  const [measurementProgress, setMeasurementProgress] = useState(0);
+  const [secondsRemaining, setSecondsRemaining] = useState(CLINICAL_WINDOW_SEC);
 
-  // Persistent historical records
+  // Persistent historical records (only finalized 30s results)
   const [history, setHistory] = useState(() => HistoryService.seedSampleDataIfEmpty());
 
   // Latest committed measurement result
@@ -42,38 +44,90 @@ export function useSehatTelemetry() {
     latestSensorsRef.current = rawSensors;
   }, [rawSensors]);
 
-  // Fetch from backend SQLite database on mount
+  // 1. Initial Synchronize of History from SQLite Database
   useEffect(() => {
-    HistoryService.fetchAllRemote().then(remoteRecords => {
-      if (remoteRecords && remoteRecords.length > 0) {
-        setHistory(remoteRecords);
-        setLatestResult(remoteRecords[0]);
+    let isMounted = true;
+    const syncHistory = async () => {
+      try {
+        const remoteRecords = await HistoryService.fetchAllRemote();
+        if (isMounted && remoteRecords && remoteRecords.length > 0) {
+          setHistory(remoteRecords);
+          setLatestResult(remoteRecords[0]);
+        }
+      } catch (err) {
+        console.debug('History sync error:', err);
       }
-    });
+    };
+    syncHistory();
   }, []);
 
-  // Update a single sensor feature manually (testing sliders)
-  const updateFeature = useCallback((field, value) => {
-    setRawSensors(prev => ({
-      ...prev,
-      [field]: value
-    }));
+  // 2. High-Frequency Live Telemetry Poller (Every 250ms - Updates UI cards only, zero DB writes)
+  useEffect(() => {
+    let isMounted = true;
+
+    const pollLiveSensors = async () => {
+      try {
+        const live = await HistoryService.fetchLiveTelemetry();
+        if (isMounted && live) {
+          setRawSensors({
+            bpm: Number(live.bpm) || 72,
+            gsr: Number(live.gsr) || 9.5,
+            temperature: Number(live.temperature) || 36.5,
+            humidity: Number(live.humidity) || 55,
+            rmssd: Number(live.rmssd) || 32,
+            predictedHours: live.predictedHours != null ? Number(live.predictedHours) : null,
+            isLive: live.isLive
+          });
+        }
+      } catch {
+        // Ignore network jitter
+      }
+    };
+
+    const interval = setInterval(pollLiveSensors, 250);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
   }, []);
 
-  // Start an On-Demand Measurement session
-  const startMeasurement = useCallback(() => {
-    if (measurementPhase !== 'idle') return;
+  // =========================================================================
+  // 4 Direct Hardware Command Actions ('c', 's', 'f', 'r')
+  // =========================================================================
+
+  // 1. Calibrate ('c')
+  const handleCalibrate = useCallback(async () => {
+    await HistoryService.sendDeviceCommand('c');
+  }, []);
+
+  // 2. Start ('s') -> Launches 30s Countdown
+  const handleStart = useCallback(async () => {
+    await HistoryService.sendDeviceCommand('s');
     setMeasurementPhase('sampling');
     setMeasurementProgress(0);
-    setSecondsRemaining(SAMPLING_DURATION_SEC);
-  }, [measurementPhase]);
+    setSecondsRemaining(CLINICAL_WINDOW_SEC);
+  }, []);
 
-  // Handle live sampling countdown
+  // 3. Flush ('f') -> Immediately forces window calculation
+  const handleFlush = useCallback(async () => {
+    await HistoryService.sendDeviceCommand('f');
+    setMeasurementPhase('inferring');
+  }, []);
+
+  // 4. Reset ('r') -> Clears recording
+  const handleReset = useCallback(async () => {
+    await HistoryService.sendDeviceCommand('r');
+    setMeasurementPhase('idle');
+    setMeasurementProgress(0);
+    setSecondsRemaining(CLINICAL_WINDOW_SEC);
+  }, []);
+
+  // Handle live sampling countdown (30s)
   useEffect(() => {
     if (measurementPhase !== 'sampling') return;
 
-    const intervalTime = 100; // update progress & live sensors every 100ms
-    const totalTicks = (SAMPLING_DURATION_SEC * 1000) / intervalTime;
+    const intervalTime = 100; // update progress every 100ms
+    const totalTicks = (CLINICAL_WINDOW_SEC * 1000) / intervalTime;
     let currentTick = 0;
 
     const timer = setInterval(() => {
@@ -84,15 +138,7 @@ export function useSehatTelemetry() {
       setMeasurementProgress(progress);
       setSecondsRemaining(remaining);
 
-      // Live real-time fluctuations as sensors acquire signals
-      setRawSensors(prev => ({
-        bpm: Math.min(130, Math.max(55, prev.bpm + (Math.floor(Math.random() * 3) - 1))),
-        gsr: +(Math.min(18, Math.max(2, prev.gsr + (Math.random() * 0.2 - 0.1)))).toFixed(2),
-        temperature: +(prev.temperature + (Math.random() * 0.04 - 0.02)).toFixed(1),
-        humidity: prev.humidity
-      }));
-
-      // When sampling ends, transition to ML Inference phase
+      // When 30 seconds complete, transition to finalize & save
       if (currentTick >= totalTicks) {
         clearInterval(timer);
         setMeasurementPhase('inferring');
@@ -102,14 +148,22 @@ export function useSehatTelemetry() {
     return () => clearInterval(timer);
   }, [measurementPhase]);
 
-  // Handle ML Inference processing delay
+  // Handle Finalizing Result & Committing Single Record to SQLite
   useEffect(() => {
     if (measurementPhase !== 'inferring') return;
 
-    // Simulate ML feature pipeline & model execution
-    const inferenceTimer = setTimeout(() => {
+    // Send flush command 'f' to ESP32 to finalize window
+    HistoryService.sendDeviceCommand('f');
+
+    const finalizeTimer = setTimeout(async () => {
       const captured = latestSensorsRef.current;
-      const finalHours = estimateHoursSinceHydration(captured);
+      
+      // Check if the ML model on ESP32 provided an inferred hours estimate
+      const modelHours = captured.predictedHours;
+      const finalHours = (modelHours != null && !isNaN(modelHours))
+        ? modelHours
+        : estimateHoursSinceHydration(captured);
+
       const finalStatus = classifyHydration(finalHours);
 
       const newRecord = {
@@ -120,17 +174,19 @@ export function useSehatTelemetry() {
         temperature: captured.temperature,
         humidity: captured.humidity,
         hoursSinceHydration: finalHours,
-        statusKey: finalStatus.key
+        predictedHoursSinceHydration: finalHours,
+        statusKey: finalStatus.key,
+        notes: `30s Clinical Session (RMSSD: ${captured.rmssd || 32}ms)`
       };
 
-      // Commit to SQLite DB and local storage
+      // Commit ONLY THIS SINGLE RESULT to SQLite Database & History Table
       const updated = HistoryService.save(newRecord);
       setHistory(updated);
       setLatestResult(newRecord);
       setMeasurementPhase('idle');
-    }, 700);
+    }, 1200);
 
-    return () => clearTimeout(inferenceTimer);
+    return () => clearTimeout(finalizeTimer);
   }, [measurementPhase]);
 
   // Clear history
@@ -140,7 +196,7 @@ export function useSehatTelemetry() {
     setLatestResult(null);
   }, []);
 
-  const isMeasuring = measurementPhase !== 'idle';
+  const isMeasuring = measurementPhase === 'sampling' || measurementPhase === 'inferring';
   const isInferring = measurementPhase === 'inferring';
 
   return {
@@ -152,8 +208,11 @@ export function useSehatTelemetry() {
     isInferring,
     measurementProgress,
     secondsRemaining,
-    startMeasurement,
-    updateFeature,
+    startMeasurement: handleStart,
+    handleStart,
+    handleCalibrate,
+    handleFlush,
+    handleReset,
     clearHistory
   };
 }

@@ -20,11 +20,15 @@ export default function App() {
     rawSensors,
     latestResult,
     history,
+    measurementPhase,
     isMeasuring,
     isInferring,
     measurementProgress,
     secondsRemaining,
-    startMeasurement,
+    handleStart,
+    handleCalibrate,
+    handleFlush,
+    handleReset,
     clearHistory
   } = useSehatTelemetry();
 
@@ -103,7 +107,10 @@ export default function App() {
             isInferring={isInferring}
             measurementProgress={measurementProgress}
             secondsRemaining={secondsRemaining}
-            onStart={startMeasurement}
+            onStart={handleStart}
+            onCalibrate={handleCalibrate}
+            onFlush={handleFlush}
+            onReset={handleReset}
           />
         </section>
 

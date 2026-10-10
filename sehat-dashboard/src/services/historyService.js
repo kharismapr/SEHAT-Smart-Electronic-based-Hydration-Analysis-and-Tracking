@@ -55,6 +55,39 @@ export const HistoryService = {
   },
 
   /**
+   * Fetches the ephemeral live sensor stream for UI cards.
+   */
+  async fetchLiveTelemetry() {
+    try {
+      const response = await fetch(`${API_BASE_URL}/telemetry/live`, {
+        signal: AbortSignal.timeout(1000)
+      });
+      if (!response.ok) return null;
+      const result = await response.json();
+      return result.success ? result.data : null;
+    } catch {
+      return null;
+    }
+  },
+
+  /**
+   * Sends a hardware command ('c', 's', 'f', 'r') to ESP32 via backend queue
+   */
+  async sendDeviceCommand(command) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/device/command`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ command })
+      });
+      return response.ok;
+    } catch (err) {
+      console.warn('Could not dispatch device command:', err.message);
+      return false;
+    }
+  },
+
+  /**
    * Saves a new measurement record both locally and to SQLite backend.
    * @param {object} record - Telemetry reading
    * @returns {Array<object>} The updated list of records
