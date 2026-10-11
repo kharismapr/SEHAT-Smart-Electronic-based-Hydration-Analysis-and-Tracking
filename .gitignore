@@ -1,4 +1,40 @@
 .venv/
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+
+# Local datasets and generated preprocessing outputs.
+data/raw/
 artifacts/ppg/cleaned/
+data/artifacts/ppg/cleaned/
+
+# Local API runtime state.
+*.db
+*.db-wal
+*.db-shm
+apps/api/.data/
+server/sehat.db
+
+# JavaScript and build output.
+node_modules/
+dist/
+.vite/
+
+# Local configuration and operating-system files.
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+
+plan.md
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+copilot-instructions.md
+*.agent.md
+*.prompt.md
+*.instructions.md
+.cursor/
+.claude/
