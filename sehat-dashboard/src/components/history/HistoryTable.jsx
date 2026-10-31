@@ -85,8 +85,6 @@ export const HistoryTable = ({ history = [], onClear, onExport }) => {
               <th className="py-3 px-4">PPG (BPM)</th>
               <th className="py-3 px-4">SpO₂ (%)</th>
               <th className="py-3 px-4">GSR (μS)</th>
-              <th className="py-3 px-4">Temp (°C)</th>
-              <th className="py-3 px-4">Humidity</th>
               <th className="py-3 px-4">Pred. Dry (h)</th>
               <th className="py-3 px-4">Classification</th>
             </tr>
@@ -94,7 +92,7 @@ export const HistoryTable = ({ history = [], onClear, onExport }) => {
           <tbody className="divide-y divide-[#83c4e2]/20 font-mono">
             {paginatedData.length === 0 ? (
               <tr>
-                <td colSpan={8} className="py-8 text-center text-[#054867]/50 font-sans">
+                <td colSpan={6} className="py-8 text-center text-[#054867]/50 font-sans">
                   No specimen records match the current filter.
                 </td>
               </tr>
@@ -111,8 +109,6 @@ export const HistoryTable = ({ history = [], onClear, onExport }) => {
                       {row.spo2Valid && row.spo2 != null ? row.spo2 : '—'}
                     </td>
                     <td className="py-3 px-4 text-[#1081b7] font-bold">{row.gsr}</td>
-                    <td className="py-3 px-4 text-[#054867] font-medium">{row.temperature}°C</td>
-                    <td className="py-3 px-4 text-[#054867] font-medium">{row.humidity}%</td>
                     <td className="py-3 px-4 font-black text-[#054867]">
                       {Number(row.hoursSinceHydration).toFixed(1)}h
                     </td>

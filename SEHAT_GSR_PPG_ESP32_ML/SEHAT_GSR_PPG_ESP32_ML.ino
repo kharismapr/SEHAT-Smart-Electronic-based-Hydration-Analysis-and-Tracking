@@ -121,14 +121,11 @@ void resetRecording(const char* reason) {
   gsr_produced = ppg_produced = paired = raw_index = 0;
   previous_ir = NAN;
   previous_gyro = {NAN, NAN, NAN};
-<<<<<<< HEAD
-  clearPpgBuffer();
-=======
   first_check_pending = false;
   last_gsr_us = NAN;
+  clearPpgBuffer();
   max30102.clearFIFO();
   while (max30102.available()) max30102.nextSample();
->>>>>>> d8623c351f08d79dec0f05fddd51eec356b84cda
   Serial.println(reason);
 }
 
@@ -315,12 +312,7 @@ void setup() {
     Serial.println("MAX30102 not detected.");
     while (true) delay(1000);
   }
-<<<<<<< HEAD
-  max30102.setup(0x24, 1, 2, kSensorHz, 411, 4096);
-  max30102.disableFIFORollover();
-=======
   configureMax30102();
->>>>>>> d8623c351f08d79dec0f05fddd51eec356b84cda
   Serial.println(sehat_gyro::begin() ? "MPU-9250 ready." :
                  "MPU-9250 unavailable; using low-motion PPG filter.");
   Serial.println("Remove GSR electrodes and send 'c' to calibrate.");
@@ -395,7 +387,6 @@ void loop() {
       resetRecording("Recording reset; GSR calibration retained.");
   }
 
-<<<<<<< HEAD
   static uint32_t latest_ir_reading = 0;
   const uint16_t received = max30102.check();
 
@@ -411,6 +402,7 @@ void loop() {
         if (active) sampleGsrDue();
         const uint32_t ir = max30102.getFIFOIR();
         latest_ir_reading = ir;
+        last_ir = ir;
         trackLiveHeartbeat(static_cast<float>(ir));
         max30102.nextSample();
         addSensorSample(ir == 0 || ir >= 0x3FFFF ? NAN : static_cast<float>(ir),
@@ -424,77 +416,27 @@ void loop() {
       const uint32_t ir = max30102.getFIFOIR();
       if (ir > 0) {
         latest_ir_reading = ir;
+        last_ir = ir;
         trackLiveHeartbeat(static_cast<float>(ir));
       }
       max30102.nextSample();
     }
   }
 
-  // Periodic 500ms live stream telemetry for dashboard gauges
+  // Periodic 250ms live stream telemetry for real-time dashboard gauges
   static uint32_t last_live_status_ms = 0;
-  if (millis() - last_live_status_ms >= 500) {
+  if (millis() - last_live_status_ms >= 250) {
     last_live_status_ms = millis();
     float current_gsr = readGsrUs();
     bool finger_present = (latest_ir_reading > 50000);
-    Serial.printf("LIVE | GSR_us=%.4f | BPM=%.1f | IR=%lu | PPG=%s | Active=%d\n",
+    Serial.printf("LIVE | GSR_us=%.4f | BPM=%.1f | IR=%lu | PPG=%s | Active=%d
+",
                   std::isfinite(current_gsr) ? current_gsr : 0.0f,
                   live_bpm > 35.0f && live_bpm < 220.0f ? live_bpm : 0.0f,
                   latest_ir_reading,
                   finger_present ? "FINGER_DETECTED" : "NO_FINGER",
                   active ? 1 : 0);
-=======
-  if (active) sampleGsrDue();
-  if (!acquisition_enabled) return;
-  if (active && millis() - last_ppg_ms > 250) {
-    resetRecording("PPG sample timeout; recording reset.");
-    return;
   }
-  if (first_check_pending)
-    Serial.println("[DBG] Memanggil MAX30102.check() pertama...");
-  const uint32_t check_started_us = micros();
-  const uint16_t received = max30102.check();
-  const uint32_t check_us = micros() - check_started_us;
-  ++check_calls;
-  fifo_samples += received;
-  if (check_us > max_check_us) max_check_us = check_us;
-  const uint8_t available = max30102.available();
-  if (first_check_pending) {
-    Serial.printf("[DBG] check() pertama selesai: baru=%u tersedia=%u durasi=%lu us\n",
-                  static_cast<unsigned>(received), static_cast<unsigned>(available),
-                  static_cast<unsigned long>(check_us));
-    first_check_pending = false;
-  }
-  // SparkFun's usual software FIFO holds four readings. If check() reads
-  // four or more at once, head can catch tail and available() becomes zero.
-  if (available < received) {
-    Serial.printf("[DBG] FIFO software kehilangan sampel: check=%u available=%u.\n",
-                  static_cast<unsigned>(received), static_cast<unsigned>(available));
-    resetRecording("MAX30102 FIFO software penuh; rekaman dihentikan. Kirim 's' lagi.");
-    return;
-  }
-  // With rollover disabled, a full 32-sample hardware FIFO can have WR=RD.
-  // SparkFun check() then reports zero forever unless overflow is checked.
-  if (millis() - last_fifo_probe_ms >= kFifoProbeIntervalMs) {
-    last_fifo_probe_ms = millis();
-    const uint8_t overflow = max30102.readRegister8(
-        kMax30102Address, kFifoOverflowRegister);
-    static uint32_t last_ovf_log_ms = 0;
-    if (kSerialDebug && overflow != 0 && millis() - last_ovf_log_ms >= 2000) {
-      last_ovf_log_ms = millis();
-      Serial.printf("[DBG] OVF=%u (info saja; rollover aktif)\n",
-                    static_cast<unsigned>(overflow));
-    }
-  }
-  while (acquisition_enabled && max30102.available()) {
-    if (active) sampleGsrDue();
-    if (!acquisition_enabled) return;
-    const uint32_t ir = max30102.getFIFOIR();
-    max30102.nextSample();
-    last_ir = ir;
-    addSensorSample(ir == 0 || ir >= 0x3FFFF ? NAN : static_cast<float>(ir),
-                    sehat_gyro::read());
-    if (active) sampleGsrDue();
->>>>>>> d8623c351f08d79dec0f05fddd51eec356b84cda
   }
   printDebugStatus();
 }

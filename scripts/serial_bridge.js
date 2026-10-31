@@ -2,7 +2,7 @@
  * SEHAT USB Serial Bridge (Node.js)
  * 
  * Reads live sensor telemetry and preprocessed window features from ESP32 Serial output
- * (from SEHAT_GSR_PPG_ESP32.ino) and forwards them to the SEHAT backend server (http://localhost:5000/api/measurements).
+ * and forwards them to the SEHAT backend server (http://localhost:5000/api/measurements).
  * 
  * Usage:
  *   node serial_bridge.js <COM_PORT> (e.g. node serial_bridge.js COM3)
@@ -44,23 +44,27 @@ parser.on('data', async (line) => {
     spo2Valid = spo2Match[2] === '1';
     latestSpo2 = spo2Valid ? Number(spo2Match[1]) : null;
   }
-  const unifiedBpm = text.match(/PPG Features: HR=([\d.]+) BPM/);
-  if (unifiedBpm) latestBPM = Number(unifiedBpm[1]);
+  // Match Heartbeat / BPM from live stream or window summaries
+  const bpmMatch = text.match(/(?:BPM|HR|mean_hr)\s*[:=]\s*([\d.]+)/i);
+  if (bpmMatch) {
+    const hr = parseFloat(bpmMatch[1]);
+    if (!isNaN(hr) && hr >= 35 && hr <= 220) {
+      latestBPM = hr;
+    }
+  }
 
-  if (text.startsWith('[Live Stream]')) {
-    const gsr = text.match(/GSR:\s*([\d.]+) uS/);
-    const temp = text.match(/Temp:\s*([\d.]+) C/);
-    const humidity = text.match(/Humidity:\s*([\d.]+) %/);
+  if (text.startsWith('[Live Stream]') || text.startsWith('LIVE |')) {
+    const gsr = text.match(/(?:GSR|GSR_us)\s*[:=]\s*([\d.]+)/i);
     if (gsr) latestGSR = Number(gsr[1]);
     try {
       await fetch(LIVE_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          bpm: latestBPM, spo2: latestSpo2, spo2Valid,
-          gsr: latestGSR,
-          temperature: temp ? Number(temp[1]) : 36.5,
-          humidity: humidity ? Number(humidity[1]) : 55
+          bpm: latestBPM,
+          spo2: latestSpo2,
+          spo2Valid,
+          gsr: latestGSR
         })
       });
     } catch (err) {
@@ -91,8 +95,6 @@ parser.on('data', async (line) => {
         spo2: latestSpo2,
         spo2Valid,
         gsr: latestGSR,
-        temperature: 36.5,
-        humidity: 55.0,
         notes: 'ESP32 Serial Bridge'
       };
 

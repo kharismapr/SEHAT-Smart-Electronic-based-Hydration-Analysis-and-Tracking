@@ -99,9 +99,9 @@ export const HistoryService = {
         id: record.id || `meas_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
         timestamp: record.timestamp || Date.now(),
         bpm: Number(record.bpm),
+        spo2: record.spo2 != null ? Number(record.spo2) : null,
+        spo2Valid: record.spo2Valid === true,
         gsr: Number(record.gsr),
-        temperature: Number(record.temperature),
-        humidity: Number(record.humidity),
         hoursSinceHydration: Number(record.hoursSinceHydration),
         predictedHoursSinceHydration: Number(record.hoursSinceHydration),
         statusKey: record.statusKey || (Number(record.hoursSinceHydration) > 10 ? 'AT_RISK' : 'WELL_HYDRATED'),
@@ -164,16 +164,14 @@ export const HistoryService = {
       const hoursSinceHydration = Math.max(0.5, (12 - i) * 1.1).toFixed(1);
       const bpm = Math.round(72 + Math.sin(i) * 6 + (hoursSinceHydration > 10 ? 12 : 0));
       const gsr = +(5.5 + Math.cos(i) * 1.2 - (hoursSinceHydration > 10 ? 2.5 : 0)).toFixed(2);
-      const temperature = +(36.5 + (hoursSinceHydration > 10 ? 0.4 : 0) + Math.random() * 0.2).toFixed(1);
-      const humidity = +(55 + Math.sin(i) * 5).toFixed(1);
 
       sampleData.push({
         id: `sample_${i}`,
         timestamp: now - hoursAgo * 3600 * 1000,
         bpm,
+        spo2: 98,
+        spo2Valid: true,
         gsr,
-        temperature,
-        humidity,
         hoursSinceHydration: parseFloat(hoursSinceHydration),
         predictedHoursSinceHydration: parseFloat(hoursSinceHydration),
         statusKey: parseFloat(hoursSinceHydration) > 10 ? 'AT_RISK' : 'WELL_HYDRATED',

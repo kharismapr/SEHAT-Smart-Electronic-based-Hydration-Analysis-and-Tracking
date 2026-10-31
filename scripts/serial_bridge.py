@@ -55,9 +55,9 @@ def main():
 
             latest_gsr = 9.5
             latest_bpm = 72.0
+            latest_spo2 = None
+            spo2_valid = False
             latest_rmssd = 32.0
-            latest_temp = 36.5
-            latest_humidity = 55.0
             latest_hours = None
 
             last_live_post = 0
@@ -72,15 +72,19 @@ def main():
                         print(f"[ESP32] {line}")
 
                         # A. Extract Live Instant GSR Conductance
-                        gsr_match = re.search(r'GSR_us=([\d.]+)', line)
+                        # Matches: GSR_us=8.45, GSR: 8.45 uS, GSR=8.45, Mean=8.45 uS, konduktansi=8.45 uS
+                        gsr_match = re.search(r'(?:GSR_us|GSR_mean|GSR|konduktansi|Mean)\s*[:=]\s*([\d.]+)', line, re.IGNORECASE)
                         if gsr_match:
                             try:
-                                latest_gsr = float(gsr_match.group(1))
+                                val = float(gsr_match.group(1))
+                                if val > 0:
+                                    latest_gsr = val
                             except ValueError:
                                 pass
 
                         # B. Extract PPG / HRV Features
-                        hr_match = re.search(r'(?:mean_hr|HR|BPM)=([\d.]+)', line)
+                        # Matches: BPM=75.0, BPM: 75, HR=75, HR: 75, mean_hr=75, Heart Rate: 75
+                        hr_match = re.search(r'(?:mean_hr|Heart\s*Rate|BPM|HR)\s*[:=]\s*([\d.]+)', line, re.IGNORECASE)
                         if hr_match:
                             try:
                                 hr = float(hr_match.group(1))
@@ -89,14 +93,31 @@ def main():
                             except ValueError:
                                 pass
 
-                        rmssd_match = re.search(r'rmssd=([\d.]+)', line, re.IGNORECASE)
+                        rmssd_match = re.search(r'rmssd\s*[:=]\s*([\d.]+)', line, re.IGNORECASE)
                         if rmssd_match:
                             try:
                                 latest_rmssd = float(rmssd_match.group(1))
                             except ValueError:
                                 pass
 
-                        # C. Extract ExtraTrees S1 Model Inferred Hours & Commit to SQLite
+                        # C. Extract SpO2 (Blood Oxygen Saturation)
+                        spo2_match = re.search(r'SpO2\s*[:=]\s*(null|[\d.]+)(?:\s*%)?(?:\s*\|\s*valid=([01]))?', line, re.IGNORECASE)
+                        if spo2_match:
+                            try:
+                                val_str = spo2_match.group(1).lower()
+                                flag = spo2_match.group(2)
+                                if flag is not None:
+                                    spo2_valid = (flag == '1')
+                                    latest_spo2 = float(val_str) if spo2_valid and val_str != 'null' else None
+                                else:
+                                    val = float(val_str)
+                                    if 50 <= val <= 100:
+                                        latest_spo2 = val
+                                        spo2_valid = True
+                            except ValueError:
+                                pass
+
+                        # D. Extract ExtraTrees S1 Model Inferred Hours & Commit to SQLite
                         if 'fasting-duration estimate' in line:
                             hours_match = re.search(r'fasting-duration estimate\s*=\s*([\d.]+)', line)
                             if hours_match:
@@ -107,9 +128,9 @@ def main():
 
                             payload = {
                                 'bpm': round(latest_bpm, 1),
+                                'spo2': latest_spo2,
+                                'spo2Valid': spo2_valid,
                                 'gsr': round(latest_gsr, 2),
-                                'temperature': latest_temp,
-                                'humidity': latest_humidity,
                                 'predictedHoursSinceHydration': round(latest_hours, 2) if latest_hours is not None else 4.0,
                                 'notes': f'ESP32 ExtraTrees S1 (RMSSD: {latest_rmssd:.1f}ms)'
                             }
@@ -127,9 +148,9 @@ def main():
                     last_live_post = now
                     live_payload = {
                         'bpm': round(latest_bpm, 1),
+                        'spo2': latest_spo2,
+                        'spo2Valid': spo2_valid,
                         'gsr': round(latest_gsr, 2),
-                        'temperature': latest_temp,
-                        'humidity': latest_humidity,
                         'rmssd': round(latest_rmssd, 1),
                         'predictedHours': round(latest_hours, 2) if latest_hours is not None else None
                     }

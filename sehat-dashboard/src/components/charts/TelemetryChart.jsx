@@ -48,9 +48,8 @@ export const TelemetryChart = ({ history = [] }) => {
     .map(item => ({
       time: formatTimeOnly(item.timestamp),
       bpm: item.bpm,
+      spo2: item.spo2Valid && item.spo2 != null ? item.spo2 : null,
       gsr: item.gsr,
-      temperature: item.temperature,
-      humidity: item.humidity,
       hours: item.hoursSinceHydration,
     }));
 
@@ -67,7 +66,7 @@ export const TelemetryChart = ({ history = [] }) => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#83c4e2]/30 pb-4">
         <div>
           <h3 className="text-base font-extrabold text-[#054867] tracking-tight">
-            Physiological & Environmental Telemetry Trends
+            Physiological Telemetry Trends
           </h3>
           <p className="text-xs text-[#1081b7] font-medium">
             Multi-sensor continuous observation over recent measurement intervals
@@ -113,6 +112,19 @@ export const TelemetryChart = ({ history = [] }) => {
               activeDot={{ r: 4 }}
             />
 
+            {/* SpO2 Line - Soft Sky Blue */}
+            <Line
+              type="monotone"
+              dataKey="spo2"
+              name="SpO₂ (%)"
+              unit="%"
+              stroke="#83c4e2"
+              strokeWidth={2.4}
+              dot={{ r: 2.5, fill: '#83c4e2' }}
+              activeDot={{ r: 4 }}
+              connectNulls
+            />
+
             {/* GSR Line - Vibrant Azure */}
             <Line
               type="monotone"
@@ -122,18 +134,6 @@ export const TelemetryChart = ({ history = [] }) => {
               stroke="#1081b7"
               strokeWidth={2.4}
               dot={{ r: 2.5, fill: '#1081b7' }}
-              activeDot={{ r: 4 }}
-            />
-
-            {/* Temperature Line - Soft Sky Blue */}
-            <Line
-              type="monotone"
-              dataKey="temperature"
-              name="Temp (°C)"
-              unit="°C"
-              stroke="#83c4e2"
-              strokeWidth={2.4}
-              dot={{ r: 2.5, fill: '#83c4e2' }}
               activeDot={{ r: 4 }}
             />
 

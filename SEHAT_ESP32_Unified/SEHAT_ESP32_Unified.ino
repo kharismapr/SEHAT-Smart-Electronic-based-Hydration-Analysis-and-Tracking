@@ -6,14 +6,12 @@
 
   Hardware Stack:
   - Microcontroller: ESP32 (DevKit v1 or Seeed Studio XIAO ESP32-C3 / S3)
-  - Photoplethysmography (PPG): MAX30102 (I2C address: 0x57)
+  - Photoplethysmography (PPG) & SpO2: MAX30102 (I2C address: 0x57)
   - Motion / Inertial Unit: GY-9250 / MPU-9250 (I2C address: 0x68 / 0x69)
-  - Ambient Environmental: BME280 / BMP280 (I2C address: 0x76 / 0x77)
   - Galvanic Skin Response (GSR): Grove GSR Sensor (Analog ADC Pin)
 
   Required Arduino Libraries (Install via Library Manager):
   - "SparkFun MAX3010x Pulse and Proximity Sensor Library" by SparkFun
-  - "Adafruit BME280 Library" and "Adafruit Unified Sensor" by Adafruit
   - "ArduinoJson" (v6 or v7) by Benoit Blanchon
 */
 
@@ -22,8 +20,6 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
-#include <Adafruit_Sensor.h>
-#include <Adafruit_BME280.h>
 #include <MAX30105.h>
 #include <spo2_algorithm.h>
 
@@ -44,6 +40,10 @@ typedef float float32;
 // ========================================================================================
 // 1. CONFIGURATION: Wi-Fi, Server & Pinout
 // ========================================================================================
+
+// Set to 1 if you want the ESP32 to send HTTP POST directly over Wi-Fi without USB bridge.
+// Set to 0 if connected via USB Serial cable using serial_bridge.py (Recommended).
+#define ENABLE_WIFI 0
 
 // --- Wi-Fi & Backend Endpoint ---
 const char* WIFI_SSID = "YOUR_WIFI_SSID";
@@ -68,8 +68,6 @@ const char* SERVER_URL = "http://192.168.1.100:5000/api/measurements";
 // ========================================================================================
 
 static MAX30105 max30102;
-static Adafruit_BME280 bme;
-static bool has_bme280 = false;
 
 static sehat_ppg::Processor ppg_processor;
 static sehat_gsr::Processor gsr_processor;
@@ -94,8 +92,6 @@ static uint32_t last_debug_print_ms = 0;
 // Shared latest readings
 static float latest_bpm = 72.0f;
 static float latest_gsr_us = 9.5f;
-static float latest_temp_c = 36.5f;
-static float latest_humidity = 55.0f;
 static float latest_predicted_hours = 0.0f;
 static bool has_max30102 = false;
 static uint32_t spo2_ir[100];
@@ -103,6 +99,47 @@ static uint32_t spo2_red[100];
 static size_t spo2_count = 0;
 static float latest_spo2 = NAN;
 static bool spo2_valid = false;
+
+// Real-time instantaneous PPG beat detector for live dashboard streaming
+static float live_bpm = 0.0f;
+static float ppg_prev_filtered = 0.0f;
+static bool ppg_rising = false;
+static uint32_t last_peak_time_ms = 0;
+
+void trackLiveHeartbeat(float ir_val) {
+  uint32_t now_ms = millis();
+  if (ir_val < 30000.0f) {
+    live_bpm = 0.0f;
+    return;
+  }
+  // Drop live BPM back to 0 if no pulse peak has arrived in > 2.5 seconds
+  if (last_peak_time_ms > 0 && (now_ms - last_peak_time_ms > 2500)) {
+    live_bpm = 0.0f;
+  }
+
+  static float dc_estimate = 100000.0f;
+  dc_estimate = 0.95f * dc_estimate + 0.05f * ir_val;
+  float ac_val = ir_val - dc_estimate;
+
+  static float ac_smoothed = 0.0f;
+  ac_smoothed = 0.7f * ac_smoothed + 0.3f * ac_val;
+
+  if (ac_smoothed > ppg_prev_filtered && !ppg_rising) {
+    ppg_rising = true;
+  } else if (ac_smoothed < ppg_prev_filtered && ppg_rising) {
+    ppg_rising = false;
+    if (ppg_prev_filtered > 20.0f) {
+      uint32_t interval = now_ms - last_peak_time_ms;
+      if (interval >= 300 && interval <= 1800) { // 33 to 200 BPM
+        float instant_bpm = 60000.0f / static_cast<float>(interval);
+        if (live_bpm <= 0.0f) live_bpm = instant_bpm;
+        else live_bpm = 0.7f * live_bpm + 0.3f * instant_bpm;
+      }
+      last_peak_time_ms = now_ms;
+    }
+  }
+  ppg_prev_filtered = ac_smoothed;
+}
 
 void addSpo2Sample(uint32_t ir, uint32_t red) {
   // The Maxim algorithm expects 100 samples at 25 Hz. The FIFO runs at 50 Hz.
@@ -232,14 +269,16 @@ void performGSRCalibration() {
 // ========================================================================================
 
 void connectToWiFi() {
+#if ENABLE_WIFI
+  if (strcmp(WIFI_SSID, "YOUR_WIFI_SSID") == 0) return;
   if (WiFi.status() == WL_CONNECTED) return;
   Serial.printf("[Wi-Fi] Connecting to '%s'", WIFI_SSID);
   WiFi.mode(WIFI_STA);
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
   uint32_t start_ms = millis();
-  while (WiFi.status() != WL_CONNECTED && millis() - start_ms < 10000) {
-    delay(400);
+  while (WiFi.status() != WL_CONNECTED && millis() - start_ms < 6000) {
+    delay(300);
     Serial.print(".");
   }
 
@@ -248,13 +287,13 @@ void connectToWiFi() {
   } else {
     Serial.println("\n[Wi-Fi] Connection timed out. Operating in offline logging mode.");
   }
+#endif
 }
 
-void transmitMeasurementToBackend(float bpm, float gsr, float temp, float humidity, float predicted_hours) {
-  if (WiFi.status() != WL_CONNECTED) {
-    connectToWiFi();
-    if (WiFi.status() != WL_CONNECTED) return;
-  }
+void transmitMeasurementToBackend(float bpm, float gsr, float predicted_hours) {
+#if ENABLE_WIFI
+  if (strcmp(WIFI_SSID, "YOUR_WIFI_SSID") == 0) return;
+  if (WiFi.status() != WL_CONNECTED) return; // Non-blocking: never freeze the DSP loop
 
   HTTPClient http;
   http.begin(SERVER_URL);
@@ -267,8 +306,6 @@ void transmitMeasurementToBackend(float bpm, float gsr, float temp, float humidi
   else doc["spo2"] = nullptr;
   doc["spo2Valid"] = spo2_valid;
   doc["gsr"] = gsr;
-  doc["temperature"] = temp;
-  doc["humidity"] = humidity;
   doc["predictedHoursSinceHydration"] = predicted_hours;
   doc["notes"] = "ESP32 TinyML RF Inference";
 
@@ -282,6 +319,7 @@ void transmitMeasurementToBackend(float bpm, float gsr, float temp, float humidi
     Serial.printf("[HTTP ERROR] Failed to send measurement: %s\n", http.errorToString(httpCode).c_str());
   }
   http.end();
+#endif
 }
 
 // ========================================================================================
@@ -320,75 +358,63 @@ void setup() {
   // 3. Initialize MPU-9250 Gyro
   initMPU9250();
 
-  // 4. Initialize BME280 Environmental Sensor
-  Serial.print("[BME280] Probing sensor on 0x76/0x77... ");
-  if (bme.begin(0x76, &Wire) || bme.begin(0x77, &Wire)) {
-    has_bme280 = true;
-    Serial.println("FOUND!");
-  } else {
-    Serial.println("Not found. Using ambient defaults (36.5C, 55% RH).");
-  }
-
-  // 5. Connect to Wi-Fi
+  // 4. Connect to Wi-Fi
   connectToWiFi();
 
-  // 6. Initial Quick GSR Calibration
+  // 5. Initial Quick GSR Calibration
   performGSRCalibration();
 
-  next_sample_micros = micros();
   Serial.println("\n[SEHAT Pipeline Ready] Sampling at 51.2 Hz (30s window, 50% overlap).");
   Serial.println("Commands: 'c' = Re-calibrate GSR | 'f' = Flush window\n");
+
+  next_sample_micros = micros();
 }
 
 // ========================================================================================
-// 7. MAIN LOOP: 51.2 Hz Preprocessing & ML Inference Engine
+// 7. MAIN SAMPLING & DSP INFERENCE LOOP
 // ========================================================================================
 
 void loop() {
-  // --- Serial Command Handler ---
-  while (Serial.available() > 0) {
-    char cmd = static_cast<char>(Serial.read());
-    if (cmd == 'c' || cmd == 'C') performGSRCalibration();
-    if (cmd == 'f' || cmd == 'F') {
-      sehat_ppg::Features ppg_tail;
-      sehat_gsr::Features gsr_tail;
-      ppg_processor.flush(ppg_tail);
-      gsr_processor.flush(gsr_tail);
+  // Process User Commands from Serial
+  if (Serial.available()) {
+    char cmd = Serial.read();
+    if (cmd == 'c' || cmd == 'C') {
+      performGSRCalibration();
+    } else if (cmd == 'f' || cmd == 'F') {
+      sehat_gsr::Features dummy_g;
+      sehat_ppg::Features dummy_p;
+      gsr_processor.flush(dummy_g);
+      ppg_processor.flush(dummy_p);
       Serial.println("[DSP] Flushed partial windows.");
     }
   }
 
-  // --- Strict 51.2 Hz Timing Scheduler (19531.25 us/sample) ---
-  int32_t late_us = static_cast<int32_t>(micros() - next_sample_micros);
-  if (late_us < 0) return;
+  // Precise 51.2 Hz Periodic Tick (~19,531 µs)
+  int32_t time_diff = micros() - next_sample_micros;
+  if (time_diff < 0) return;
 
-  // Handle sampling drift
-  if (late_us > 40000) {
-    ppg_processor.reset();
-    gsr_processor.reset();
-    have_prev_sample = false;
-    spo2_count = 0;
-    spo2_valid = false;
-    latest_spo2 = NAN;
-    next_sample_micros = micros();
-    return;
-  }
-
-  // Advance timing grid for 51.2 Hz
+  // Add 1 µs every 4th sample to maintain exact 19,531.25 µs cadence
+  uint32_t step_us = (sample_cycle_count % 4 == 0) ? 19532 : 19531;
+  next_sample_micros += step_us;
   sample_cycle_count++;
-  next_sample_micros += 19531u + (sample_cycle_count % 4u == 0u ? 1u : 0u);
 
-  // 1. Read Raw Sensor Feeds
+  // 1. Acquire Paired Sensor Readings
   uint32_t raw_ir = 0;
   uint32_t raw_red = 0;
   if (has_max30102) {
     max30102.check();
-    if (max30102.available()) {
+    while (max30102.available()) {
       raw_ir = max30102.getFIFOIR();
       raw_red = max30102.getFIFORed();
       max30102.nextSample();
       addSpo2Sample(raw_ir, raw_red);
+      if (raw_ir > 30000) {
+        trackLiveHeartbeat(static_cast<float>(raw_ir));
+      }
     }
+  }
+  if (raw_ir <= 30000) {
+    trackLiveHeartbeat(0.0f);
   }
   float current_ir = (raw_ir > 30000) ? static_cast<float>(raw_ir) : NAN;
   GyroData current_gyro = readGyroscope();
@@ -397,12 +423,6 @@ void loop() {
 
   // Update live vital state
   if (std::isfinite(current_gsr_us)) latest_gsr_us = current_gsr_us;
-  if (has_bme280) {
-    float t = bme.readTemperature();
-    float h = bme.readHumidity();
-    if (std::isfinite(t)) latest_temp_c = t;
-    if (std::isfinite(h)) latest_humidity = h;
-  }
 
   // 2. Feed GSR Preprocessing Engine
   sehat_gsr::Features gsr_feats;
@@ -453,8 +473,6 @@ void loop() {
     else Serial.println(">> SpO2: null | valid=0");
     Serial.printf(">> GSR Features: Mean=%.2f uS, Var=%.4f, Entropy=%.2f\n",
                   feat_gsr_mean, feat_gsr_var, feat_gsr_entropy);
-    Serial.printf(">> Ambient: Temp=%.1f C, Humidity=%.1f %%\n",
-                  latest_temp_c, latest_humidity);
 
 #if ENABLE_EMBEDDED_ML
     // Assemble 9-dimensional Feature Vector for TinyML Random Forest
@@ -476,19 +494,21 @@ void loop() {
     transmitMeasurementToBackend(
       feat_bpm,
       feat_gsr_mean,
-      latest_temp_c,
-      latest_humidity,
       latest_predicted_hours
     );
     Serial.println("--------------------------------------------------------------------\n");
   }
 
-  // --- Status Log (every 2 seconds) ---
-  if (millis() - last_debug_print_ms >= 2000) {
+  // --- Status Log (every 250ms for real-time dashboard gauges) ---
+  if (millis() - last_debug_print_ms >= 250) {
     last_debug_print_ms = millis();
-    if (spo2_valid) Serial.printf("[Live Stream] IR: %u | SpO2: %.0f %% | valid=1 | GSR: %.2f uS | Temp: %.1f C | Humidity: %.1f %%\n",
-                                  raw_ir, latest_spo2, latest_gsr_us, latest_temp_c, latest_humidity);
-    else Serial.printf("[Live Stream] IR: %u | SpO2: null | valid=0 | GSR: %.2f uS | Temp: %.1f C | Humidity: %.1f %%\n",
-                       raw_ir, latest_gsr_us, latest_temp_c, latest_humidity);
+    float disp_bpm = (live_bpm >= 35.0f && live_bpm <= 220.0f) ? live_bpm : 0.0f;
+    if (spo2_valid) {
+      Serial.printf("[Live Stream] IR: %u | BPM: %.1f | SpO2: %.0f %% | valid=1 | GSR: %.2f uS\n",
+                    raw_ir, disp_bpm, latest_spo2, latest_gsr_us);
+    } else {
+      Serial.printf("[Live Stream] IR: %u | BPM: %.1f | SpO2: null | valid=0 | GSR: %.2f uS\n",
+                    raw_ir, disp_bpm, latest_gsr_us);
+    }
   }
 }

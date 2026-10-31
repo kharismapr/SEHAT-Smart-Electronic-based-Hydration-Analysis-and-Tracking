@@ -14,9 +14,9 @@ The database explicitly separates raw physiological sensor feeds from the inferr
 | `timestamp` | `INTEGER NOT NULL` | Epoch millisecond timestamp |
 | `created_at` | `TEXT NOT NULL` | Human-readable ISO 8601 UTC timestamp |
 | `bpm` | `REAL NOT NULL` | **Raw Sensor**: Heart rate from PPG (MAX30102) |
+| `spo2` | `REAL` | **Raw Sensor**: Blood oxygen saturation from MAX30102 (%) |
+| `spo2_valid` | `INTEGER NOT NULL` | `1` if SpO2 reading is valid, `0` otherwise |
 | `gsr` | `REAL NOT NULL` | **Raw Sensor**: Galvanic skin conductance in $\mu\text{S}$ |
-| `temperature` | `REAL NOT NULL` | **Raw Sensor**: Body / skin temperature in °C |
-| `humidity` | `REAL NOT NULL` | **Raw Sensor**: Ambient relative humidity in % |
 | `predicted_hours_since_hydration` | `REAL NOT NULL` | **Model Output**: Predicted hours dry ($y_{hat}$), NOT raw counted time |
 | `status_key` | `TEXT NOT NULL` | `WELL_HYDRATED` ($\le 10\text{h}$) or `AT_RISK` ($> 10\text{h}$) |
 | `notes` | `TEXT` | Optional clinical / test annotations |
@@ -58,9 +58,9 @@ Records a new measurement. Can be submitted by the React dashboard or directly f
 ```json
 {
   "bpm": 76.5,
-  "gsr": 8.2,
-  "temperature": 36.6,
-  "humidity": 52.0
+  "spo2": 98.0,
+  "spo2Valid": true,
+  "gsr": 8.2
 }
 ```
 *(If `predicted_hours_since_hydration` is omitted, the server automatically computes the regression inference).*
@@ -84,17 +84,17 @@ const char* ssid = "YOUR_WIFI_SSID";
 const char* password = "YOUR_WIFI_PASSWORD";
 const char* serverUrl = "http://192.168.1.100:5000/api/measurements";
 
-void sendMeasurement(float bpm, float gsr, float temp, float humidity) {
+void sendMeasurement(float bpm, float spo2, bool spo2Valid, float gsr) {
   if (WiFi.status() == WL_CONNECTED) {
     HTTPClient http;
     http.begin(serverUrl);
     http.addHeader("Content-Type", "application/json");
 
-    StaticJsonDocument<200> doc;
+    StaticJsonDocument<256> doc;
     doc["bpm"] = bpm;
+    if (spo2Valid) doc["spo2"] = spo2;
+    doc["spo2Valid"] = spo2Valid;
     doc["gsr"] = gsr;
-    doc["temperature"] = temp;
-    doc["humidity"] = humidity;
 
     String jsonString;
     serializeJson(doc, jsonString);

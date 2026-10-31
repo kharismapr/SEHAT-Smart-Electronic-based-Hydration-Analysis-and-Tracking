@@ -20,8 +20,6 @@ export function useSehatTelemetry() {
     spo2: null,
     spo2Valid: false,
     gsr: 9.5,
-    temperature: 36.5,
-    humidity: 55,
     rmssd: 32,
     predictedHours: null,
     isLive: false
@@ -76,8 +74,6 @@ export function useSehatTelemetry() {
             spo2: live.spo2Valid && Number.isFinite(Number(live.spo2)) ? Number(live.spo2) : null,
             spo2Valid: live.spo2Valid === true,
             gsr: Number(live.gsr) || 9.5,
-            temperature: Number(live.temperature) || 36.5,
-            humidity: Number(live.humidity) || 55,
             rmssd: Number(live.rmssd) || 32,
             predictedHours: live.predictedHours != null ? Number(live.predictedHours) : null,
             isLive: live.isLive
@@ -177,8 +173,6 @@ export function useSehatTelemetry() {
         spo2: captured.spo2Valid ? captured.spo2 : null,
         spo2Valid: captured.spo2Valid,
         gsr: captured.gsr,
-        temperature: captured.temperature,
-        humidity: captured.humidity,
         hoursSinceHydration: finalHours,
         predictedHoursSinceHydration: finalHours,
         statusKey: finalStatus.key,

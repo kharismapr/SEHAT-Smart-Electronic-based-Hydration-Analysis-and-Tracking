@@ -1,7 +1,7 @@
 # SEHAT Unified ESP32 Firmware
 
 This directory houses the unified **on-device firmware** that executes the complete SEHAT biosignal pipeline directly on an ESP32:
-1. **Multisensor Acquisition**: Reads MAX30102 (PPG), GY-9250 (IMU Gyroscope), BME280 (Temperature & Humidity), and Grove GSR (Galvanic Skin Response).
+1. **Multisensor Acquisition**: Reads MAX30102 (PPG & SpO2), GY-9250 (IMU Gyroscope), and Grove GSR (Galvanic Skin Response).
 2. **On-Device Preprocessing & DSP**: Butterworth bandpass/lowpass filtering, motion artifact compensation, and statistical/HRV feature extraction.
 3. **On-Device TinyML Inference**: Evaluates the pre-compiled Random Forest model (`rf_hydration_model.h`) to predict hydration state ($y_{\text{hat}}$).
 4. **Wi-Fi Ingestion**: Transmits telemetry and classification packets over HTTP POST directly to the SEHAT backend database.
@@ -10,17 +10,16 @@ This directory houses the unified **on-device firmware** that executes the compl
 
 ## 1. Pinout Wiring
 
-### I2C Bus Configuration (Shared by MAX30102, GY-9250, BME280)
+### I2C Bus Configuration (Shared by MAX30102, GY-9250)
 | Sensor | VCC | GND | SDA | SCL |
 | :--- | :--- | :--- | :--- | :--- |
-| **MAX30102** | 3.3V | GND | `D4` on XIAO | `D5` on XIAO |
-| **GY-9250 / MPU-9250** | 3.3V | GND | `D4` on XIAO | `D5` on XIAO |
-| **BME280** | 3.3V | GND | `D4` on XIAO | `D5` on XIAO |
+| **MAX30102** | 3.3V | GND | `D4` on XIAO (GPIO 21 on DevKit) | `D5` on XIAO (GPIO 22 on DevKit) |
+| **GY-9250 / MPU-9250** | 3.3V | GND | `D4` on XIAO (GPIO 21 on DevKit) | `D5` on XIAO (GPIO 22 on DevKit) |
 
 ### Analog Sensor (Grove GSR)
 | Sensor Pin | ESP32 Pin |
 | :--- | :--- |
-| **Grove GSR SIG** | `A0` on XIAO (GPIO 2 on C3; GPIO 1 on S3) |
+| **Grove GSR SIG** | `A0` on XIAO (GPIO 2 on C3; GPIO 1 on S3; GPIO 34 on DevKit) |
 | **Grove GSR VCC** | `3.3V` |
 | **Grove GSR GND** | `GND` |
 
@@ -29,15 +28,10 @@ This directory houses the unified **on-device firmware** that executes the compl
 ## 2. Required Arduino IDE Libraries
 
 Install these via **Tools > Manage Libraries...** in the Arduino IDE:
-1. `SparkFun MAX3010x Pulse and Proximity Sensor Library` (by SparkFun)
-2. `Adafruit BME280 Library` (by Adafruit)
-3. `Adafruit Unified Sensor` (by Adafruit)
-4. `ArduinoJson` (v6 or v7, by Benoit Blanchon)
+1. `SparkFun MAX3010x Pulse and Proximity Sensor Library` (by SparkFun, includes `spo2_algorithm.h`)
+2. `ArduinoJson` (v6 or v7, by Benoit Blanchon)
 
-The SparkFun library must include `spo2_algorithm.h` and its implementation.
-
-## SpO2 data
-
+## SpO2 Data
 The MAX30102 red and IR FIFO channels feed the SparkFun/Maxim SpO2 algorithm.
 The firmware sends `spo2` (percent, or JSON `null`) and `spo2Valid` (boolean)
 with each measurement. A valid value requires a full 100-sample window and a
@@ -46,7 +40,7 @@ successful algorithm result. The serial bridge forwards the same fields to
 have `spo2: null` and `spo2Valid: 0`.
 
 Use a reference pulse oximeter to evaluate accuracy before interpreting these
-readings clinically. The dashboard does not consume these fields yet.
+readings clinically.
 
 ---
 

@@ -2,3 +2,10 @@
 __pycache__/
 *.pyc
 artifacts/ppg/cleaned/
+node_modules/
+*.db-shm
+*.db-wal
+.env
+.env.*
+*.bak
+.theia/

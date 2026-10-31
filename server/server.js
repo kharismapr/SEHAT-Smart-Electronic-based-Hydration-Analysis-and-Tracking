@@ -17,8 +17,6 @@ let liveTelemetry = {
   spo2: null,
   spo2Valid: false,
   gsr: 9.5,
-  temperature: 36.5,
-  humidity: 55,
   rmssd: 32,
   predictedHours: null,
   isLive: false,
@@ -52,7 +50,7 @@ app.get('/api/telemetry/live', (req, res) => {
 
 // POST /api/telemetry/live (Streamed from Bridge every 250ms, no DB write)
 app.post('/api/telemetry/live', (req, res) => {
-  const { bpm, spo2, spo2Valid, gsr, temperature, humidity, rmssd, predictedHours } = req.body;
+  const { bpm, spo2, spo2Valid, gsr, rmssd, predictedHours } = req.body;
   const spo2Value = spo2 == null ? null : Number(spo2);
   const validSpo2 = spo2Valid === true && spo2Value !== null && Number.isFinite(spo2Value) && spo2Value >= 0 && spo2Value <= 100;
   liveTelemetry = {
@@ -60,8 +58,6 @@ app.post('/api/telemetry/live', (req, res) => {
     spo2: validSpo2 ? spo2Value : null,
     spo2Valid: validSpo2,
     gsr: Number(gsr ?? liveTelemetry.gsr),
-    temperature: Number(temperature ?? liveTelemetry.temperature),
-    humidity: Number(humidity ?? liveTelemetry.humidity),
     rmssd: Number(rmssd ?? liveTelemetry.rmssd),
     predictedHours: predictedHours != null ? Number(predictedHours) : liveTelemetry.predictedHours,
     isLive: true,
@@ -106,11 +102,11 @@ app.get('/api/measurements', (req, res) => {
 // GET latest measurement
 app.get('/api/measurements/latest', (req, res) => {
   try {
-    const latest = MeasurementRepository.getLatest();
-    if (!latest) {
-      return res.status(404).json({ success: false, message: 'No records found' });
+    const record = MeasurementRepository.getLatest();
+    if (!record) {
+      return res.status(404).json({ success: false, message: 'No measurements found' });
     }
-    res.json({ success: true, data: latest });
+    res.json({ success: true, data: record });
   } catch (error) {
     console.error('Error fetching latest measurement:', error);
     res.status(500).json({ success: false, error: error.message });
@@ -120,12 +116,12 @@ app.get('/api/measurements/latest', (req, res) => {
 // POST new measurement (from React Dashboard or ESP32 / Wearable)
 app.post('/api/measurements', (req, res) => {
   try {
-    const { bpm, spo2, spo2Valid, gsr, temperature, humidity, hoursSinceHydration, predictedHoursSinceHydration, notes, id, timestamp } = req.body;
+    const { bpm, spo2, spo2Valid, gsr, hoursSinceHydration, predictedHoursSinceHydration, notes, id, timestamp } = req.body;
 
-    if (bpm === undefined && gsr === undefined && temperature === undefined && humidity === undefined) {
+    if (bpm === undefined && gsr === undefined) {
       return res.status(400).json({
         success: false,
-        error: 'Missing required sensor features (bpm, gsr, temperature, humidity)'
+        error: 'Missing required sensor features (bpm, gsr)'
       });
     }
 
@@ -136,8 +132,6 @@ app.post('/api/measurements', (req, res) => {
       spo2,
       spo2Valid,
       gsr,
-      temperature,
-      humidity,
       predictedHoursSinceHydration: predictedHoursSinceHydration ?? hoursSinceHydration,
       notes
     });

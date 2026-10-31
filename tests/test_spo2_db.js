@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 process.env.SEHAT_DB_PATH = ':memory:';
 const { MeasurementRepository } = await import('../server/db.js');
 
-const base = { bpm: 72, gsr: 6.4, temperature: 36.6, humidity: 55 };
+const base = { bpm: 72, gsr: 6.4 };
 const valid = MeasurementRepository.insert({ ...base, spo2: 98, spo2Valid: true });
 assert.equal(valid.spo2, 98);
 assert.equal(valid.spo2Valid, 1);

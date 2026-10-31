@@ -18,8 +18,8 @@ db.exec(`
     created_at TEXT NOT NULL,
     bpm REAL NOT NULL,
     gsr REAL NOT NULL,
-    temperature REAL NOT NULL,
-    humidity REAL NOT NULL,
+    temperature REAL DEFAULT 0,
+    humidity REAL DEFAULT 0,
     predicted_hours_since_hydration REAL NOT NULL,
     status_key TEXT NOT NULL,
     notes TEXT
@@ -35,21 +35,16 @@ if (!measurementColumns.has('spo2_valid')) db.exec('ALTER TABLE measurements ADD
 
 /**
  * Predicts hours since hydration based on biological regression heuristic
- * Matches client model: f(PPG, GSR, Temp, Humidity) -> Estimated Hours (y_hat)
+ * Matches client model: f(PPG, GSR, SpO2) -> Estimated Hours (y_hat)
  */
-export function calculateInference(bpm, gsr, temperature, humidity) {
+export function calculateInference(bpm, gsr) {
   const baselineGsr = 14.0;
   const gsrDeficit = Math.max(0, (baselineGsr - gsr) * 0.95);
 
   const baselineBpm = 68;
   const bpmDeficit = Math.max(0, (bpm - baselineBpm) * 0.09);
 
-  const baselineTemp = 36.4;
-  const tempDeficit = Math.max(0, (temperature - baselineTemp) * 1.6);
-
-  const humidityCorrection = Math.max(0, (50 - humidity) * 0.03);
-
-  const rawEstimate = gsrDeficit + bpmDeficit + tempDeficit + humidityCorrection;
+  const rawEstimate = gsrDeficit + bpmDeficit;
   const boundedEstimate = Math.max(0.2, Math.min(24.0, rawEstimate));
   const predictedHours = parseFloat(boundedEstimate.toFixed(1));
   const statusKey = predictedHours > 10.0 ? 'AT_RISK' : 'WELL_HYDRATED';
@@ -68,14 +63,12 @@ export const MeasurementRepository = {
         spo2,
         spo2_valid AS spo2Valid,
         gsr,
-        temperature,
-        humidity,
         predicted_hours_since_hydration AS hoursSinceHydration,
         predicted_hours_since_hydration AS predictedHoursSinceHydration,
         status_key AS statusKey,
         notes
       FROM measurements
-      ORDER BY timestamp DESC
+      ORDER BY timestamp DESC, rowid DESC
       LIMIT ?
     `);
     return stmt.all(limit);
@@ -91,14 +84,12 @@ export const MeasurementRepository = {
         spo2,
         spo2_valid AS spo2Valid,
         gsr,
-        temperature,
-        humidity,
         predicted_hours_since_hydration AS hoursSinceHydration,
         predicted_hours_since_hydration AS predictedHoursSinceHydration,
         status_key AS statusKey,
         notes
       FROM measurements
-      ORDER BY timestamp DESC
+      ORDER BY timestamp DESC, rowid DESC
       LIMIT 1
     `);
     return stmt.get();
@@ -114,15 +105,15 @@ export const MeasurementRepository = {
       Number.isFinite(spo2Value) && spo2Value >= 0 && spo2Value <= 100;
     const spo2 = spo2Valid ? spo2Value : null;
     const gsr = Number(record.gsr ?? 10);
-    const temperature = Number(record.temperature ?? 36.5);
-    const humidity = Number(record.humidity ?? 55);
+    const temperature = Number(record.temperature ?? 0);
+    const humidity = Number(record.humidity ?? 0);
 
     // If prediction is not provided by the sender, infer it on the server
     let predictedHours = record.predictedHoursSinceHydration ?? record.hoursSinceHydration;
     let statusKey = record.statusKey;
 
     if (predictedHours === undefined || predictedHours === null || Number.isNaN(Number(predictedHours))) {
-      const inference = calculateInference(bpm, gsr, temperature, humidity);
+      const inference = calculateInference(bpm, gsr);
       predictedHours = inference.predictedHours;
       statusKey = inference.statusKey;
     } else {
@@ -162,8 +153,6 @@ export const MeasurementRepository = {
       spo2,
       spo2Valid: spo2Valid ? 1 : 0,
       gsr,
-      temperature,
-      humidity,
       hoursSinceHydration: predictedHours,
       predictedHoursSinceHydration: predictedHours,
       statusKey,
@@ -193,16 +182,14 @@ export const MeasurementRepository = {
       const hoursPredicted = Math.max(0.5, (12 - i) * 1.1).toFixed(1);
       const bpm = Math.round(72 + Math.sin(i) * 6 + (hoursPredicted > 10 ? 12 : 0));
       const gsr = +(5.5 + Math.cos(i) * 1.2 - (hoursPredicted > 10 ? 2.5 : 0)).toFixed(2);
-      const temperature = +(36.5 + (hoursPredicted > 10 ? 0.4 : 0) + Math.random() * 0.2).toFixed(1);
-      const humidity = +(55 + Math.sin(i) * 5).toFixed(1);
 
       this.insert({
         id: `sample_${i}`,
         timestamp: now - hoursAgo * 3600 * 1000,
         bpm,
+        spo2: 98,
+        spo2Valid: true,
         gsr,
-        temperature,
-        humidity,
         predictedHoursSinceHydration: parseFloat(hoursPredicted),
         statusKey: parseFloat(hoursPredicted) > 10 ? 'AT_RISK' : 'WELL_HYDRATED',
         notes: 'Initial synthetic seed calibration'

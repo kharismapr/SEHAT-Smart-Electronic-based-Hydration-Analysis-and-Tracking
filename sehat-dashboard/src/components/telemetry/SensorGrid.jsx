@@ -1,5 +1,5 @@
 import React from 'react';
-import { Heart, Activity, Thermometer, CloudRain } from 'lucide-react';
+import { Heart, Activity } from 'lucide-react';
 import { SensorMetricCard } from './SensorMetricCard';
 
 /**
@@ -7,7 +7,7 @@ import { SensorMetricCard } from './SensorMetricCard';
  * Palette: #054867, #1081b7, #83c4e2, white
  */
 export const SensorGrid = ({ reading, isLive = false }) => {
-  const { bpm = 72, spo2 = null, spo2Valid = false, gsr = 6.4, temperature = 36.6, humidity = 55 } = reading || {};
+  const { bpm = 72, spo2 = null, spo2Valid = false, gsr = 6.4 } = reading || {};
 
   return (
     <div className="space-y-2">
@@ -21,7 +21,7 @@ export const SensorGrid = ({ reading, isLive = false }) => {
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* PPG (Heart Rate) */}
         <SensorMetricCard
           label="Heartbeat (PPG)"
@@ -44,22 +44,6 @@ export const SensorGrid = ({ reading, isLive = false }) => {
           value={gsr}
           unit="μS"
           icon={Activity}
-        />
-
-        {/* Body Temperature */}
-        <SensorMetricCard
-          label="Temperature"
-          value={temperature}
-          unit="°C"
-          icon={Thermometer}
-        />
-
-        {/* Ambient Humidity */}
-        <SensorMetricCard
-          label="Humidity"
-          value={humidity}
-          unit="%"
-          icon={CloudRain}
         />
       </div>
     </div>

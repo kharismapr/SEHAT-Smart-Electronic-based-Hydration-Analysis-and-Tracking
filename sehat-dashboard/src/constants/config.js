@@ -27,9 +27,8 @@ export const HYDRATION_RULES = {
 // Sensor physiological normal reference ranges
 export const SENSOR_RANGES = {
   BPM: { min: 60, max: 100, unit: 'BPM', label: 'Heart Rate (PPG)' },
-  GSR: { min: 2.0, max: 20.0, unit: 'μS', label: 'Skin Conductance (GSR)' },
-  TEMPERATURE: { min: 35.5, max: 37.8, unit: '°C', label: 'Body Temperature' },
-  HUMIDITY: { min: 30, max: 70, unit: '%', label: 'Ambient Humidity' }
+  SPO2: { min: 95, max: 100, unit: '%', label: 'Oxygen Saturation (SpO₂)' },
+  GSR: { min: 2.0, max: 20.0, unit: 'μS', label: 'Skin Conductance (GSR)' }
 };
 
 // Local storage key for persistent history
