@@ -14,6 +14,8 @@ MeasurementRepository.seedDemoDataIfEmpty();
 // Ephemeral in-memory live sensor stream (does NOT write to SQLite DB)
 let liveTelemetry = {
   bpm: 72,
+  spo2: null,
+  spo2Valid: false,
   gsr: 9.5,
   temperature: 36.5,
   humidity: 55,
@@ -50,9 +52,13 @@ app.get('/api/telemetry/live', (req, res) => {
 
 // POST /api/telemetry/live (Streamed from Bridge every 250ms, no DB write)
 app.post('/api/telemetry/live', (req, res) => {
-  const { bpm, gsr, temperature, humidity, rmssd, predictedHours } = req.body;
+  const { bpm, spo2, spo2Valid, gsr, temperature, humidity, rmssd, predictedHours } = req.body;
+  const spo2Value = spo2 == null ? null : Number(spo2);
+  const validSpo2 = spo2Valid === true && spo2Value !== null && Number.isFinite(spo2Value) && spo2Value >= 0 && spo2Value <= 100;
   liveTelemetry = {
     bpm: Number(bpm ?? liveTelemetry.bpm),
+    spo2: validSpo2 ? spo2Value : null,
+    spo2Valid: validSpo2,
     gsr: Number(gsr ?? liveTelemetry.gsr),
     temperature: Number(temperature ?? liveTelemetry.temperature),
     humidity: Number(humidity ?? liveTelemetry.humidity),
@@ -114,7 +120,7 @@ app.get('/api/measurements/latest', (req, res) => {
 // POST new measurement (from React Dashboard or ESP32 / Wearable)
 app.post('/api/measurements', (req, res) => {
   try {
-    const { bpm, gsr, temperature, humidity, hoursSinceHydration, predictedHoursSinceHydration, notes, id, timestamp } = req.body;
+    const { bpm, spo2, spo2Valid, gsr, temperature, humidity, hoursSinceHydration, predictedHoursSinceHydration, notes, id, timestamp } = req.body;
 
     if (bpm === undefined && gsr === undefined && temperature === undefined && humidity === undefined) {
       return res.status(400).json({
@@ -127,6 +133,8 @@ app.post('/api/measurements', (req, res) => {
       id,
       timestamp,
       bpm,
+      spo2,
+      spo2Valid,
       gsr,
       temperature,
       humidity,

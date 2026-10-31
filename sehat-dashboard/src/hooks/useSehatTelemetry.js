@@ -17,6 +17,8 @@ export function useSehatTelemetry() {
   // Live biosignal telemetry feeds (ephemeral display only, updates gauges)
   const [rawSensors, setRawSensors] = useState({
     bpm: 72,
+    spo2: null,
+    spo2Valid: false,
     gsr: 9.5,
     temperature: 36.5,
     humidity: 55,
@@ -71,6 +73,8 @@ export function useSehatTelemetry() {
         if (isMounted && live) {
           setRawSensors({
             bpm: Number(live.bpm) || 72,
+            spo2: live.spo2Valid && Number.isFinite(Number(live.spo2)) ? Number(live.spo2) : null,
+            spo2Valid: live.spo2Valid === true,
             gsr: Number(live.gsr) || 9.5,
             temperature: Number(live.temperature) || 36.5,
             humidity: Number(live.humidity) || 55,
@@ -170,6 +174,8 @@ export function useSehatTelemetry() {
         id: `meas_${Date.now()}`,
         timestamp: Date.now(),
         bpm: captured.bpm,
+        spo2: captured.spo2Valid ? captured.spo2 : null,
+        spo2Valid: captured.spo2Valid,
         gsr: captured.gsr,
         temperature: captured.temperature,
         humidity: captured.humidity,

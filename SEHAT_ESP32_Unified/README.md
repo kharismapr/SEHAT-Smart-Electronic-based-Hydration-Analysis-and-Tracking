@@ -13,14 +13,14 @@ This directory houses the unified **on-device firmware** that executes the compl
 ### I2C Bus Configuration (Shared by MAX30102, GY-9250, BME280)
 | Sensor | VCC | GND | SDA | SCL |
 | :--- | :--- | :--- | :--- | :--- |
-| **MAX30102** | 3.3V | GND | `GPIO 21` (or `D4` on XIAO) | `GPIO 22` (or `D5` on XIAO) |
-| **GY-9250 / MPU-9250** | 3.3V | GND | `GPIO 21` (or `D4` on XIAO) | `GPIO 22` (or `D5` on XIAO) |
-| **BME280** | 3.3V | GND | `GPIO 21` (or `D4` on XIAO) | `GPIO 22` (or `D5` on XIAO) |
+| **MAX30102** | 3.3V | GND | `D4` on XIAO | `D5` on XIAO |
+| **GY-9250 / MPU-9250** | 3.3V | GND | `D4` on XIAO | `D5` on XIAO |
+| **BME280** | 3.3V | GND | `D4` on XIAO | `D5` on XIAO |
 
 ### Analog Sensor (Grove GSR)
 | Sensor Pin | ESP32 Pin |
 | :--- | :--- |
-| **Grove GSR SIG** | `GPIO 34` (or `A0 / GPIO 2` on XIAO ESP32-C3) |
+| **Grove GSR SIG** | `A0` on XIAO (GPIO 2 on C3; GPIO 1 on S3) |
 | **Grove GSR VCC** | `3.3V` |
 | **Grove GSR GND** | `GND` |
 
@@ -33,6 +33,20 @@ Install these via **Tools > Manage Libraries...** in the Arduino IDE:
 2. `Adafruit BME280 Library` (by Adafruit)
 3. `Adafruit Unified Sensor` (by Adafruit)
 4. `ArduinoJson` (v6 or v7, by Benoit Blanchon)
+
+The SparkFun library must include `spo2_algorithm.h` and its implementation.
+
+## SpO2 data
+
+The MAX30102 red and IR FIFO channels feed the SparkFun/Maxim SpO2 algorithm.
+The firmware sends `spo2` (percent, or JSON `null`) and `spo2Valid` (boolean)
+with each measurement. A valid value requires a full 100-sample window and a
+successful algorithm result. The serial bridge forwards the same fields to
+`/api/telemetry/live`; `/api/measurements` stores them in SQLite. Old records
+have `spo2: null` and `spo2Valid: 0`.
+
+Use a reference pulse oximeter to evaluate accuracy before interpreting these
+readings clinically. The dashboard does not consume these fields yet.
 
 ---
 

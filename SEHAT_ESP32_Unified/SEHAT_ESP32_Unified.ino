@@ -25,6 +25,7 @@
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BME280.h>
 #include <MAX30105.h>
+#include <spo2_algorithm.h>
 
 // Type definition required by emlearn C Header
 typedef float float32;
@@ -51,10 +52,10 @@ const char* WIFI_PASSWORD = "YOUR_WIFI_PASSWORD";
 const char* SERVER_URL = "http://192.168.1.100:5000/api/measurements";
 
 // --- Pin Definitions ---
-#if defined(CONFIG_IDF_TARGET_ESP32C3) || defined(ARDUINO_SEEED_XIAO_ESP32C3)
-  constexpr int I2C_SDA_PIN = D4; // GPIO 6
-  constexpr int I2C_SCL_PIN = D5; // GPIO 7
-  constexpr int GSR_ADC_PIN = A0; // GPIO 2
+#if defined(ARDUINO_SEEED_XIAO_ESP32C3) || defined(ARDUINO_XIAO_ESP32C3) || defined(CONFIG_IDF_TARGET_ESP32C3) || defined(ARDUINO_SEEED_XIAO_ESP32S3) || defined(ARDUINO_XIAO_ESP32S3)
+  constexpr int I2C_SDA_PIN = D4;
+  constexpr int I2C_SCL_PIN = D5;
+  constexpr int GSR_ADC_PIN = A0;
 #else
   // Default for ESP32 DevKit V1
   constexpr int I2C_SDA_PIN = 21;
@@ -96,6 +97,40 @@ static float latest_gsr_us = 9.5f;
 static float latest_temp_c = 36.5f;
 static float latest_humidity = 55.0f;
 static float latest_predicted_hours = 0.0f;
+static bool has_max30102 = false;
+static uint32_t spo2_ir[100];
+static uint32_t spo2_red[100];
+static size_t spo2_count = 0;
+static float latest_spo2 = NAN;
+static bool spo2_valid = false;
+
+void addSpo2Sample(uint32_t ir, uint32_t red) {
+  // The Maxim algorithm expects 100 samples at 25 Hz. The FIFO runs at 50 Hz.
+  static uint8_t decimation = 0;
+  if (++decimation < 2) return;
+  decimation = 0;
+  if (ir < 30000 || red < 30000) {
+    spo2_count = 0;
+    spo2_valid = false;
+    latest_spo2 = NAN;
+    return;
+  }
+  spo2_ir[spo2_count] = ir;
+  spo2_red[spo2_count++] = red;
+  if (spo2_count < 100) return;
+
+  int32_t value = -999;
+  int32_t algorithm_hr = -999;
+  int8_t valid = 0;
+  int8_t hr_valid = 0;
+  maxim_heart_rate_and_oxygen_saturation(spo2_ir, 100, spo2_red,
+                                        &value, &valid, &algorithm_hr, &hr_valid);
+  spo2_valid = valid == 1 && value >= 0 && value <= 100;
+  latest_spo2 = spo2_valid ? static_cast<float>(value) : NAN;
+  memmove(spo2_ir, spo2_ir + 25, 75 * sizeof(uint32_t));
+  memmove(spo2_red, spo2_red + 25, 75 * sizeof(uint32_t));
+  spo2_count = 75;
+}
 
 // ========================================================================================
 // 3. MPU-9250 GYROSCOPE HELPER FUNCTIONS
@@ -226,8 +261,11 @@ void transmitMeasurementToBackend(float bpm, float gsr, float temp, float humidi
   http.addHeader("Content-Type", "application/json");
 
   // Create JSON Payload
-  StaticJsonDocument<256> doc;
+  StaticJsonDocument<384> doc;
   doc["bpm"] = bpm;
+  if (spo2_valid) doc["spo2"] = latest_spo2;
+  else doc["spo2"] = nullptr;
+  doc["spo2Valid"] = spo2_valid;
   doc["gsr"] = gsr;
   doc["temperature"] = temp;
   doc["humidity"] = humidity;
@@ -272,9 +310,10 @@ void setup() {
   if (!max30102.begin(Wire, I2C_SPEED_FAST)) {
     Serial.println("NOT FOUND! Check wiring (3.3V, GND, SDA, SCL).");
   } else {
+    has_max30102 = true;
     Serial.println("FOUND!");
-    // Setup for 50Hz continuous FIFO
-    max30102.setup(0x1F, 4, 2, 400, 411, 4096);
+    // 200 samples/s averaged by 4 = 50 paired red/IR FIFO samples/s.
+    max30102.setup(0x1F, 4, 2, 200, 411, 4096);
     max30102.enableDIETEMPRDY();
   }
 
@@ -328,6 +367,9 @@ void loop() {
     ppg_processor.reset();
     gsr_processor.reset();
     have_prev_sample = false;
+    spo2_count = 0;
+    spo2_valid = false;
+    latest_spo2 = NAN;
     next_sample_micros = micros();
     return;
   }
@@ -337,7 +379,17 @@ void loop() {
   next_sample_micros += 19531u + (sample_cycle_count % 4u == 0u ? 1u : 0u);
 
   // 1. Read Raw Sensor Feeds
-  uint32_t raw_ir = max30102.getIR();
+  uint32_t raw_ir = 0;
+  uint32_t raw_red = 0;
+  if (has_max30102) {
+    max30102.check();
+    if (max30102.available()) {
+      raw_ir = max30102.getFIFOIR();
+      raw_red = max30102.getFIFORed();
+      max30102.nextSample();
+      addSpo2Sample(raw_ir, raw_red);
+    }
+  }
   float current_ir = (raw_ir > 30000) ? static_cast<float>(raw_ir) : NAN;
   GyroData current_gyro = readGyroscope();
   float current_gsr_adc = readGSRAdc10();
@@ -397,6 +449,8 @@ void loop() {
 
     Serial.printf(">> PPG Features: HR=%.1f BPM, RMSSD=%.1f ms, SDNN=%.1f ms, pNN50=%.1f %%\n",
                   feat_bpm, feat_rmssd, feat_sdnn, feat_pnn50);
+    if (spo2_valid) Serial.printf(">> SpO2: %.0f %% | valid=1\n", latest_spo2);
+    else Serial.println(">> SpO2: null | valid=0");
     Serial.printf(">> GSR Features: Mean=%.2f uS, Var=%.4f, Entropy=%.2f\n",
                   feat_gsr_mean, feat_gsr_var, feat_gsr_entropy);
     Serial.printf(">> Ambient: Temp=%.1f C, Humidity=%.1f %%\n",
@@ -432,7 +486,9 @@ void loop() {
   // --- Status Log (every 2 seconds) ---
   if (millis() - last_debug_print_ms >= 2000) {
     last_debug_print_ms = millis();
-    Serial.printf("[Live Stream] IR: %u | GSR: %.2f uS | Temp: %.1f C | Humidity: %.1f %%\n",
-                  raw_ir, latest_gsr_us, latest_temp_c, latest_humidity);
+    if (spo2_valid) Serial.printf("[Live Stream] IR: %u | SpO2: %.0f %% | valid=1 | GSR: %.2f uS | Temp: %.1f C | Humidity: %.1f %%\n",
+                                  raw_ir, latest_spo2, latest_gsr_us, latest_temp_c, latest_humidity);
+    else Serial.printf("[Live Stream] IR: %u | SpO2: null | valid=0 | GSR: %.2f uS | Temp: %.1f C | Humidity: %.1f %%\n",
+                       raw_ir, latest_gsr_us, latest_temp_c, latest_humidity);
   }
 }

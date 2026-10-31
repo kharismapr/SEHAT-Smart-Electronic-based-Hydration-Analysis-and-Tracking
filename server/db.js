@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const DB_PATH = path.join(__dirname, 'sehat.db');
+const DB_PATH = process.env.SEHAT_DB_PATH || path.join(__dirname, 'sehat.db');
 
 export const db = new DatabaseSync(DB_PATH);
 
@@ -27,6 +27,11 @@ db.exec(`
 
   CREATE INDEX IF NOT EXISTS idx_measurements_timestamp ON measurements(timestamp DESC);
 `);
+
+// Existing installations already have the table; add optional SpO2 columns in place.
+const measurementColumns = new Set(db.prepare('PRAGMA table_info(measurements)').all().map(column => column.name));
+if (!measurementColumns.has('spo2')) db.exec('ALTER TABLE measurements ADD COLUMN spo2 REAL');
+if (!measurementColumns.has('spo2_valid')) db.exec('ALTER TABLE measurements ADD COLUMN spo2_valid INTEGER NOT NULL DEFAULT 0');
 
 /**
  * Predicts hours since hydration based on biological regression heuristic
@@ -60,6 +65,8 @@ export const MeasurementRepository = {
         timestamp,
         created_at AS createdAt,
         bpm,
+        spo2,
+        spo2_valid AS spo2Valid,
         gsr,
         temperature,
         humidity,
@@ -81,6 +88,8 @@ export const MeasurementRepository = {
         timestamp,
         created_at AS createdAt,
         bpm,
+        spo2,
+        spo2_valid AS spo2Valid,
         gsr,
         temperature,
         humidity,
@@ -100,6 +109,10 @@ export const MeasurementRepository = {
     const timestamp = record.timestamp || Date.now();
     const createdAt = new Date(timestamp).toISOString();
     const bpm = Number(record.bpm ?? 72);
+    const spo2Value = record.spo2 == null ? null : Number(record.spo2);
+    const spo2Valid = record.spo2Valid === true && spo2Value !== null &&
+      Number.isFinite(spo2Value) && spo2Value >= 0 && spo2Value <= 100;
+    const spo2 = spo2Valid ? spo2Value : null;
     const gsr = Number(record.gsr ?? 10);
     const temperature = Number(record.temperature ?? 36.5);
     const humidity = Number(record.humidity ?? 55);
@@ -121,9 +134,9 @@ export const MeasurementRepository = {
 
     const stmt = db.prepare(`
       INSERT INTO measurements (
-        id, timestamp, created_at, bpm, gsr, temperature, humidity,
+        id, timestamp, created_at, bpm, spo2, spo2_valid, gsr, temperature, humidity,
         predicted_hours_since_hydration, status_key, notes
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
     stmt.run(
@@ -131,6 +144,8 @@ export const MeasurementRepository = {
       timestamp,
       createdAt,
       bpm,
+      spo2,
+      spo2Valid ? 1 : 0,
       gsr,
       temperature,
       humidity,
@@ -144,6 +159,8 @@ export const MeasurementRepository = {
       timestamp,
       createdAt,
       bpm,
+      spo2,
+      spo2Valid: spo2Valid ? 1 : 0,
       gsr,
       temperature,
       humidity,

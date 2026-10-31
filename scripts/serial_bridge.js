@@ -15,6 +15,7 @@ import { ReadlineParser } from '@serialport/parser-readline';
 const COM_PORT = process.argv[2] || 'COM3';
 const BAUD_RATE = 115200;
 const SERVER_URL = 'http://localhost:5000/api/measurements';
+const LIVE_URL = 'http://localhost:5000/api/telemetry/live';
 
 console.log(`[SEHAT Bridge] Opening ${COM_PORT} at ${BAUD_RATE} baud...`);
 
@@ -30,10 +31,42 @@ const parser = port.pipe(new ReadlineParser({ delimiter: '\n' }));
 
 let latestGSR = 9.5;
 let latestBPM = 72.0;
+let latestSpo2 = null;
+let spo2Valid = false;
 
 parser.on('data', async (line) => {
   const text = line.trim();
   console.log(`[ESP32] ${text}`);
+
+  // Unified firmware emits a paired SpO2 value and validity flag.
+  const spo2Match = text.match(/SpO2:\s*(null|[\d.]+)\s*(?:%\s*)?\|\s*valid=([01])/);
+  if (spo2Match) {
+    spo2Valid = spo2Match[2] === '1';
+    latestSpo2 = spo2Valid ? Number(spo2Match[1]) : null;
+  }
+  const unifiedBpm = text.match(/PPG Features: HR=([\d.]+) BPM/);
+  if (unifiedBpm) latestBPM = Number(unifiedBpm[1]);
+
+  if (text.startsWith('[Live Stream]')) {
+    const gsr = text.match(/GSR:\s*([\d.]+) uS/);
+    const temp = text.match(/Temp:\s*([\d.]+) C/);
+    const humidity = text.match(/Humidity:\s*([\d.]+) %/);
+    if (gsr) latestGSR = Number(gsr[1]);
+    try {
+      await fetch(LIVE_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          bpm: latestBPM, spo2: latestSpo2, spo2Valid,
+          gsr: latestGSR,
+          temperature: temp ? Number(temp[1]) : 36.5,
+          humidity: humidity ? Number(humidity[1]) : 55
+        })
+      });
+    } catch (err) {
+      console.warn('[Bridge Error] Could not forward live telemetry:', err.message);
+    }
+  }
 
   // 1. Match live stream: ADC10=..., GSR_us=...
   const gsrMatch = text.match(/GSR_us=([\d.]+)/);
@@ -55,6 +88,8 @@ parser.on('data', async (line) => {
     try {
       const payload = {
         bpm: latestBPM,
+        spo2: latestSpo2,
+        spo2Valid,
         gsr: latestGSR,
         temperature: 36.5,
         humidity: 55.0,

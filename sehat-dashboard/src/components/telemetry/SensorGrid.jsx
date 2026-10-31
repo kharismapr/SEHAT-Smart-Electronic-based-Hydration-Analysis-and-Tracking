@@ -7,7 +7,7 @@ import { SensorMetricCard } from './SensorMetricCard';
  * Palette: #054867, #1081b7, #83c4e2, white
  */
 export const SensorGrid = ({ reading, isLive = false }) => {
-  const { bpm = 72, gsr = 6.4, temperature = 36.6, humidity = 55 } = reading || {};
+  const { bpm = 72, spo2 = null, spo2Valid = false, gsr = 6.4, temperature = 36.6, humidity = 55 } = reading || {};
 
   return (
     <div className="space-y-2">
@@ -21,13 +21,21 @@ export const SensorGrid = ({ reading, isLive = false }) => {
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
         {/* PPG (Heart Rate) */}
         <SensorMetricCard
           label="Heartbeat (PPG)"
           value={bpm}
           unit="BPM"
           icon={Heart}
+        />
+
+        {/* Blood oxygen saturation from MAX30102 red/IR channels */}
+        <SensorMetricCard
+          label="Oxygen Saturation (SpO₂)"
+          value={spo2Valid ? spo2 : '—'}
+          unit="%"
+          icon={Activity}
         />
 
         {/* GSR (Galvanic Skin Response) */}
