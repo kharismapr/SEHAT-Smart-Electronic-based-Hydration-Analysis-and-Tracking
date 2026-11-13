@@ -27,9 +27,9 @@
 #include <math.h>
 
 // ----------------------- PIN & SENSOR CONFIGURATION -----------------------
-constexpr uint8_t PIN_SDA = 21;
-constexpr uint8_t PIN_SCL = 22;
-constexpr uint8_t PIN_GSR = 34;
+constexpr uint8_t PIN_SDA = 6;
+constexpr uint8_t PIN_SCL = 7;
+constexpr uint8_t PIN_GSR = 2;
 
 constexpr uint8_t MAX30102_SAMPLE_RATE_HZ = 50;
 constexpr uint8_t MAX30102_LED_BRIGHTNESS = 0x1F;
