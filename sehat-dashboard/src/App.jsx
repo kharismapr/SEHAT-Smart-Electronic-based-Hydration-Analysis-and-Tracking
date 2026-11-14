@@ -1,26 +1,28 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSehatTelemetry } from './hooks/useSehatTelemetry';
 import { VitalStatusBanner } from './components/telemetry/VitalStatusBanner';
 import { SensorGrid } from './components/telemetry/SensorGrid';
 import { MeasurementTrigger } from './components/telemetry/MeasurementTrigger';
+import { SerialMonitorDrawer } from './components/telemetry/SerialMonitorDrawer';
 import { HistoryTable } from './components/history/HistoryTable';
+import { HistoryService } from './services/historyService';
 import { exportToCSVString } from './utils/calculations';
-import { Radio, Battery, BatteryMedium, BatteryLow } from 'lucide-react';
+import { Radio, Battery, BatteryMedium, BatteryLow, Terminal, Play, Square } from 'lucide-react';
 
 /**
  * SEHAT Single-Page All-in-One Dashboard
  * Palette: #054867 (Deep Ocean), #1081b7 (Vibrant Azure), #83c4e2 (Soft Sky), White
  */
 export default function App() {
-  // Device hardware status
-  const connectionStatus = 'Connected';
+  // Device hardware battery status
   const batteryLevel = 84;
 
   const {
     rawSensors,
+    isConnected,
+    bridgeRunning,
     latestResult,
     history,
-    measurementPhase,
     isMeasuring,
     isInferring,
     measurementProgress,
@@ -31,6 +33,25 @@ export default function App() {
     handleReset,
     clearHistory
   } = useSehatTelemetry();
+
+  const [isMonitorOpen, setIsMonitorOpen] = useState(false);
+  const [selectedPort, setSelectedPort] = useState('');
+  const [isTogglingBridge, setIsTogglingBridge] = useState(false);
+
+  const connectionStatus = isConnected ? 'Connected' : 'Disconnected';
+
+  const handleStartBridge = async () => {
+    setIsTogglingBridge(true);
+    await HistoryService.startSerialBridge(selectedPort);
+    setIsTogglingBridge(false);
+    setIsMonitorOpen(true);
+  };
+
+  const handleStopBridge = async () => {
+    setIsTogglingBridge(true);
+    await HistoryService.stopSerialBridge();
+    setIsTogglingBridge(false);
+  };
 
   // Export local history to CSV
   const handleExportCSV = () => {
@@ -80,14 +101,69 @@ export default function App() {
           </div>
         </div>
 
-        {/* Live Hardware Telemetry Status */}
-        <div className="flex items-center gap-2.5 sm:gap-3">
+        {/* Live Hardware Telemetry Status & Serial Bridge Controls */}
+        <div className="flex items-center gap-2 sm:gap-2.5">
+          {/* Direct Run / Stop Serial Bridge Button */}
+          {bridgeRunning ? (
+            <button
+              type="button"
+              onClick={handleStopBridge}
+              disabled={isTogglingBridge}
+              title="Stop Serial Bridge background process"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-500/25 hover:bg-rose-500/40 border border-rose-300/40 text-rose-100 transition-colors cursor-pointer"
+            >
+              <Square className="w-3 h-3 fill-rose-200" />
+              <span className="hidden md:inline">Stop Bridge</span>
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={handleStartBridge}
+              disabled={isTogglingBridge}
+              title="Launch serial_bridge.py without opening CLI"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500/25 hover:bg-emerald-500/40 border border-emerald-300/40 text-emerald-100 transition-colors cursor-pointer"
+            >
+              <Play className="w-3 h-3 fill-emerald-200" />
+              <span className="hidden md:inline">Run Bridge</span>
+            </button>
+          )}
+
+          {/* Serial Monitor Drawer Toggle Button */}
+          <button
+            type="button"
+            onClick={() => setIsMonitorOpen(true)}
+            title="Open CLI Serial Monitor & Troubleshooter"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-white/10 hover:bg-white/20 border border-white/20 text-white transition-colors cursor-pointer"
+          >
+            <Terminal className="w-3.5 h-3.5 text-[#83c4e2]" />
+            <span className="hidden sm:inline">Serial Monitor</span>
+          </button>
+
           {/* Connection Status Pill */}
-          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-white/10 border border-white/20 backdrop-blur-md text-white shadow-xs">
-            <span className="w-2 h-2 rounded-full bg-[#83c4e2] shadow-[0_0_8px_#83c4e2]" />
+          <button
+            type="button"
+            onClick={() => setIsMonitorOpen(true)}
+            title="Click to inspect connection in Serial Monitor"
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border backdrop-blur-md shadow-xs transition-colors cursor-pointer ${
+              isConnected
+                ? 'bg-white/10 border-white/20 text-white'
+                : 'bg-rose-500/20 border-rose-300/40 text-rose-100'
+            }`}
+          >
+            <span
+              className={`w-2 h-2 rounded-full ${
+                isConnected
+                  ? 'bg-emerald-400 shadow-[0_0_8px_#34d399]'
+                  : 'bg-rose-400 shadow-[0_0_8px_#fb7185]'
+              }`}
+            />
             <span className="hidden sm:inline">{connectionStatus}</span>
-            <Radio className="w-3.5 h-3.5 text-[#83c4e2]" />
-          </div>
+            <Radio
+              className={`w-3.5 h-3.5 ${
+                isConnected ? 'text-[#83c4e2]' : 'text-rose-300 opacity-70'
+              }`}
+            />
+          </button>
 
           {/* Battery Status Pill */}
           <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono font-bold bg-white/10 border border-white/20 backdrop-blur-md text-white shadow-xs">
@@ -96,6 +172,18 @@ export default function App() {
           </div>
         </div>
       </header>
+
+      {/* Slide-over CLI Serial Monitor Sidebar */}
+      <SerialMonitorDrawer
+        isOpen={isMonitorOpen}
+        onClose={() => setIsMonitorOpen(false)}
+        isConnected={isConnected}
+        bridgeRunning={bridgeRunning}
+        selectedPort={selectedPort}
+        onSelectPort={setSelectedPort}
+        onStartBridge={handleStartBridge}
+        onStopBridge={handleStopBridge}
+      />
 
       {/* 2. Main Single-Page Workspace */}
       <main className="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">

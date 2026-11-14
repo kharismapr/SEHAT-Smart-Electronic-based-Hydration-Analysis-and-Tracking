@@ -88,6 +88,82 @@ export const HistoryService = {
   },
 
   /**
+   * Fetches Serial Bridge process status and CLI log lines.
+   */
+  async fetchBridgeStatus() {
+    try {
+      const response = await fetch(`${API_BASE_URL}/bridge/status`, {
+        signal: AbortSignal.timeout(1500)
+      });
+      if (!response.ok) return null;
+      const result = await response.json();
+      return result.success ? result.data : null;
+    } catch {
+      return null;
+    }
+  },
+
+  /**
+   * Lists available serial COM ports detected by the backend.
+   */
+  async fetchBridgePorts() {
+    try {
+      const response = await fetch(`${API_BASE_URL}/bridge/ports`, {
+        signal: AbortSignal.timeout(3000)
+      });
+      if (!response.ok) return [];
+      const result = await response.json();
+      return Array.isArray(result.ports) ? result.ports : [];
+    } catch {
+      return [];
+    }
+  },
+
+  /**
+   * Starts the managed python serial_bridge.py process on the backend.
+   */
+  async startSerialBridge(port = '') {
+    try {
+      const response = await fetch(`${API_BASE_URL}/bridge/start`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ port })
+      });
+      return await response.json();
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
+  },
+
+  /**
+   * Stops the managed python serial_bridge.py process on the backend.
+   */
+  async stopSerialBridge() {
+    try {
+      const response = await fetch(`${API_BASE_URL}/bridge/stop`, {
+        method: 'POST'
+      });
+      return await response.json();
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
+  },
+
+  /**
+   * Clears the Serial Bridge CLI monitor logs on the backend.
+   */
+  async clearBridgeLogs() {
+    try {
+      const response = await fetch(`${API_BASE_URL}/bridge/logs`, {
+        method: 'DELETE'
+      });
+      return response.ok;
+    } catch {
+      return false;
+    }
+  },
+
+  /**
    * Saves a new measurement record both locally and to SQLite backend.
    * @param {object} record - Telemetry reading
    * @returns {Array<object>} The updated list of records

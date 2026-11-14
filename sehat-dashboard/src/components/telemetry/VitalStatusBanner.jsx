@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, AlertCircle, Cpu, Loader2 } from 'lucide-react';
+import { ShieldCheck, AlertCircle, Cpu, Loader2, Droplets } from 'lucide-react';
 import { classifyHydration } from '../../utils/calculations';
 
 /**
@@ -94,9 +94,7 @@ export const VitalStatusBanner = ({
             {status.label}
           </h2>
           <p className="text-xs text-[#054867]/70 font-medium">
-            {isAtRisk
-              ? 'Elevated interval without fluid intake detected by biosignal regression.'
-              : 'Hydration balance is in optimal physiological equilibrium.'}
+            {status.description}
           </p>
         </div>
 
@@ -113,6 +111,33 @@ export const VitalStatusBanner = ({
             </span>
             <span className="text-xs font-bold text-[#1081b7]">hours</span>
           </div>
+        </div>
+      </div>
+
+      {/* Patient Action Suggestion */}
+      <div
+        className={`mt-5 pt-4 border-t flex items-start gap-3 text-xs ${
+          isAtRisk
+            ? 'border-amber-200 text-amber-950'
+            : 'border-[#83c4e2]/40 text-[#054867]'
+        }`}
+      >
+        <div
+          className={`p-2 rounded-lg shrink-0 ${
+            isAtRisk
+              ? 'bg-amber-100 text-amber-700'
+              : 'bg-[#f0f7fb] text-[#1081b7]'
+          }`}
+        >
+          <Droplets className="w-4 h-4" />
+        </div>
+        <div className="space-y-0.5">
+          <p className="text-[11px] font-bold uppercase tracking-wider opacity-75">
+            Recommended Next Step
+          </p>
+          <p className="font-semibold leading-relaxed">
+            {status.suggestion}
+          </p>
         </div>
       </div>
     </div>

@@ -14,12 +14,14 @@ export const HYDRATION_RULES = {
       label: 'Well Hydrated',
       color: 'emerald',
       description: 'Fluid levels are in optimal physiological balance.',
+      suggestion: 'Tubuh Anda sudah terhidrasi dengan baik. Tidak perlu minum secara berlebihan saat ini—cukup minum air putih secara berkala untuk menjaga keseimbangan cairan tubuh.',
     },
     AT_RISK: {
       key: 'AT_RISK',
       label: 'In Risk of Dehydration',
       color: 'rose',
       description: 'Prolonged period without hydration detected. Please rehydrate immediately.',
+      suggestion: 'Tindakan Diperlukan: Segera minum 250–500 mL air putih atau cairan elektrolit, hindari aktivitas fisik berat untuk sementara, dan lakukan pengukuran ulang dalam 30–60 menit.',
     }
   }
 };

@@ -22,7 +22,8 @@ export function useSehatTelemetry() {
     gsr: 9.5,
     rmssd: 32,
     predictedHours: null,
-    isLive: false
+    isLive: false,
+    bridgeRunning: false
   });
 
   // State of measurement session
@@ -68,7 +69,8 @@ export function useSehatTelemetry() {
     const pollLiveSensors = async () => {
       try {
         const live = await HistoryService.fetchLiveTelemetry();
-        if (isMounted && live) {
+        if (!isMounted) return;
+        if (live) {
           setRawSensors({
             bpm: Number(live.bpm) || 72,
             spo2: live.spo2Valid && Number.isFinite(Number(live.spo2)) ? Number(live.spo2) : null,
@@ -76,11 +78,24 @@ export function useSehatTelemetry() {
             gsr: Number(live.gsr) || 9.5,
             rmssd: Number(live.rmssd) || 32,
             predictedHours: live.predictedHours != null ? Number(live.predictedHours) : null,
-            isLive: live.isLive
+            isLive: Boolean(live.isLive),
+            bridgeRunning: Boolean(live.bridgeRunning)
           });
+        } else {
+          setRawSensors(prev =>
+            prev.isLive || prev.bridgeRunning
+              ? { ...prev, isLive: false, bridgeRunning: false }
+              : prev
+          );
         }
       } catch {
-        // Ignore network jitter
+        if (isMounted) {
+          setRawSensors(prev =>
+            prev.isLive || prev.bridgeRunning
+              ? { ...prev, isLive: false, bridgeRunning: false }
+              : prev
+          );
+        }
       }
     };
 
@@ -201,6 +216,8 @@ export function useSehatTelemetry() {
 
   return {
     rawSensors,
+    isConnected: Boolean(rawSensors.isLive),
+    bridgeRunning: Boolean(rawSensors.bridgeRunning),
     latestResult,
     history,
     measurementPhase,

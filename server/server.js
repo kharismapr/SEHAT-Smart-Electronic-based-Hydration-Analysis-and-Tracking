@@ -1,6 +1,13 @@
 import express from 'express';
 import cors from 'cors';
+import { spawn, execFile } from 'node:child_process';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { MeasurementRepository } from './db.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const BRIDGE_SCRIPT_PATH = path.resolve(__dirname, '..', 'scripts', 'serial_bridge.py');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -20,11 +27,138 @@ let liveTelemetry = {
   rmssd: 32,
   predictedHours: null,
   isLive: false,
-  timestamp: Date.now()
+  timestamp: 0
 };
 
 // Device Command Queue (e.g. 'c' = calibrate, 's' = start, 'f' = flush, 'r' = reset)
 let pendingCommands = [];
+
+// ============================================================================
+// Managed Serial Bridge Process & CLI Serial Monitor Log Buffer
+// ============================================================================
+let bridgeProcess = null;
+let bridgePortArg = null;
+let bridgeLogs = [];
+const MAX_BRIDGE_LOGS = 400;
+
+function appendBridgeLog(text, level = 'info') {
+  const lines = String(text).split(/\r?\n/);
+  for (const rawLine of lines) {
+    const line = rawLine.trimEnd();
+    if (!line) continue;
+    bridgeLogs.push({
+      id: `${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+      timestamp: Date.now(),
+      text: line,
+      level
+    });
+  }
+  if (bridgeLogs.length > MAX_BRIDGE_LOGS) {
+    bridgeLogs = bridgeLogs.slice(-MAX_BRIDGE_LOGS);
+  }
+}
+
+function startSerialBridge(port = '') {
+  if (bridgeProcess && bridgeProcess.exitCode === null && !bridgeProcess.killed) {
+    return {
+      alreadyRunning: true,
+      pid: bridgeProcess.pid,
+      port: bridgePortArg || 'Auto'
+    };
+  }
+
+  const cleanPort = typeof port === 'string' ? port.trim() : '';
+  bridgePortArg = cleanPort || null;
+
+  const args = ['-u', BRIDGE_SCRIPT_PATH];
+  if (cleanPort) {
+    args.push(cleanPort);
+  }
+
+  appendBridgeLog(
+    `[Dashboard] Launching serial_bridge.py (${cleanPort ? `Port: ${cleanPort}` : 'Auto-detect COM port'})...`,
+    'system'
+  );
+
+  try {
+    const child = spawn('python', args, {
+      cwd: path.resolve(__dirname, '..'),
+      windowsHide: true
+    });
+
+    bridgeProcess = child;
+
+    child.stdout.on('data', (chunk) => {
+      appendBridgeLog(chunk.toString(), 'stdout');
+    });
+
+    child.stderr.on('data', (chunk) => {
+      appendBridgeLog(chunk.toString(), 'stderr');
+    });
+
+    child.on('error', (err) => {
+      appendBridgeLog(`[Process Error] Failed to spawn python serial_bridge.py: ${err.message}`, 'error');
+      if (bridgeProcess === child) {
+        bridgeProcess = null;
+        liveTelemetry.timestamp = 0;
+        liveTelemetry.isLive = false;
+      }
+    });
+
+    child.on('close', (code, signal) => {
+      appendBridgeLog(
+        `[Bridge Process Exited] code=${code ?? 'null'}${signal ? ` signal=${signal}` : ''}`,
+        code === 0 ? 'system' : 'error'
+      );
+      if (bridgeProcess === child) {
+        bridgeProcess = null;
+        liveTelemetry.timestamp = 0;
+        liveTelemetry.isLive = false;
+      }
+    });
+
+    return {
+      alreadyRunning: false,
+      pid: child.pid,
+      port: bridgePortArg || 'Auto'
+    };
+  } catch (err) {
+    appendBridgeLog(`[Exception] ${err.message}`, 'error');
+    bridgeProcess = null;
+    throw err;
+  }
+}
+
+function stopSerialBridge() {
+  if (!bridgeProcess) {
+    liveTelemetry.timestamp = 0;
+    liveTelemetry.isLive = false;
+    return false;
+  }
+  const pid = bridgeProcess.pid;
+  try {
+    bridgeProcess.kill();
+  } catch {
+    // ignore kill error
+  }
+  bridgeProcess = null;
+  bridgePortArg = null;
+  liveTelemetry.timestamp = 0;
+  liveTelemetry.isLive = false;
+  appendBridgeLog(`[Dashboard] Stopped serial_bridge.py (PID ${pid}).`, 'system');
+  return true;
+}
+
+// Ensure child process is cleaned up when server exits
+process.on('exit', () => {
+  if (bridgeProcess) {
+    try {
+      bridgeProcess.kill();
+    } catch {
+      // ignore
+    }
+  }
+});
 
 // Health Check
 app.get('/api/health', (req, res) => {
@@ -39,11 +173,16 @@ app.get('/api/health', (req, res) => {
 // GET /api/telemetry/live (Current live sensor state for UI gauges)
 app.get('/api/telemetry/live', (req, res) => {
   const ageMs = Date.now() - liveTelemetry.timestamp;
+  const isBridgeActive = liveTelemetry.timestamp > 0 && ageMs < 3500;
+  const isBridgeRunning = Boolean(bridgeProcess && bridgeProcess.exitCode === null && !bridgeProcess.killed);
   res.json({
     success: true,
     data: {
       ...liveTelemetry,
-      isLive: ageMs < 5000 // Active if updated within last 5 seconds
+      isLive: isBridgeActive,
+      bridgeRunning: isBridgeRunning,
+      bridgePid: isBridgeRunning ? bridgeProcess.pid : null,
+      bridgePort: bridgePortArg || 'Auto'
     }
   });
 });
@@ -81,6 +220,79 @@ app.post('/api/device/command', (req, res) => {
 app.get('/api/device/command', (req, res) => {
   const command = pendingCommands.shift() || null;
   res.json({ success: true, command });
+});
+
+// ============================================================================
+// Serial Bridge Control & Serial Monitor Endpoints
+// ============================================================================
+
+// GET /api/bridge/status (Returns process state + CLI serial monitor logs)
+app.get('/api/bridge/status', (req, res) => {
+  const isRunning = Boolean(bridgeProcess && bridgeProcess.exitCode === null && !bridgeProcess.killed);
+  const ageMs = Date.now() - liveTelemetry.timestamp;
+  const isLive = liveTelemetry.timestamp > 0 && ageMs < 3500;
+  res.json({
+    success: true,
+    data: {
+      isRunning,
+      isLive,
+      pid: isRunning ? bridgeProcess.pid : null,
+      port: bridgePortArg || 'Auto',
+      logs: bridgeLogs
+    }
+  });
+});
+
+// GET /api/bridge/ports (Lists available serial COM ports via pyserial)
+app.get('/api/bridge/ports', (req, res) => {
+  const pyCode =
+    "import serial.tools.list_ports, json; print(json.dumps([{'port': p.device, 'description': p.description} for p in serial.tools.list_ports.comports()]))";
+  execFile('python', ['-c', pyCode], { timeout: 3000, windowsHide: true }, (err, stdout) => {
+    if (err) {
+      return res.json({ success: true, ports: [] });
+    }
+    try {
+      const ports = JSON.parse(stdout.trim() || '[]');
+      res.json({ success: true, ports });
+    } catch {
+      res.json({ success: true, ports: [] });
+    }
+  });
+});
+
+// POST /api/bridge/start (Spawns python serial_bridge.py from dashboard)
+app.post('/api/bridge/start', (req, res) => {
+  try {
+    const port = req.body?.port || '';
+    const info = startSerialBridge(port);
+    res.json({
+      success: true,
+      data: {
+        isRunning: true,
+        ...info
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /api/bridge/stop (Stops the managed serial_bridge.py process)
+app.post('/api/bridge/stop', (req, res) => {
+  const stopped = stopSerialBridge();
+  res.json({
+    success: true,
+    data: {
+      isRunning: false,
+      stopped
+    }
+  });
+});
+
+// DELETE /api/bridge/logs (Clears the serial monitor log buffer)
+app.delete('/api/bridge/logs', (req, res) => {
+  bridgeLogs = [];
+  res.json({ success: true });
 });
 
 // GET all measurements
