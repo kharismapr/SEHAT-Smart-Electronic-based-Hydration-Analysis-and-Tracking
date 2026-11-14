@@ -1,5 +1,5 @@
-// SEHAT S1: synchronized GSR/PPG preprocessing and ExtraTrees regression.
-// Model output is fasting_duration_hr (hours), not hydration percentage.
+// SEHAT-only: synchronized GSR/PPG preprocessing and ExtraTrees regression.
+// Model output is estimated fasting_duration_hr (hours), not hydration percentage.
 #include <Arduino.h>
 #include <Wire.h>
 #include <MAX30105.h>
@@ -7,8 +7,7 @@
 
 #include "mpu9250_gyro.h"
 #include "s1_features.h"
-typedef float float32;  // Type required by the checked-in emlearn export.
-#include "et_hydration_model_S1.h"
+#include "et_sehat_only.h"
 
 constexpr uint8_t kSdaPin = 21, kSclPin = 22, kGsrPin = 34;
 constexpr uint8_t kSensorHz = 50;
@@ -25,6 +24,8 @@ static sehat_ppg::Processor ppg;
 struct PpgPoint { float ir, gyro; };
 static float gsr_queue[kPending];
 static PpgPoint ppg_queue[kPending];
+static uint8_t gsr_missing_window[sehat_gsr::kWindowSamples] = {};
+static uint8_t severe_motion_window[sehat_gsr::kWindowSamples] = {};
 static uint64_t gsr_produced = 0, ppg_produced = 0, paired = 0, raw_index = 0;
 static uint32_t next_gsr_us = 0, last_ppg_ms = 0, window_number = 0;
 static float previous_ir = NAN, calibration_adc10 = NAN;
@@ -132,6 +133,31 @@ void resetRecording(const char* reason) {
 void reportWindow(const sehat_gsr::Features& g,
                   const sehat_ppg::Features& p) {
   ++window_number;
+  // Training accepts complete 30-second windows only. A GSR gap must be
+  // internal and no longer than 0.25 s (12 samples at 51.2 Hz).
+  if (g.window_samples != sehat_gsr::kWindowSamples ||
+      p.window_samples != sehat_ppg::kWindow) return;
+  size_t missing = 0, motion = 0, gap = 0;
+  bool unresolved_gsr = false;
+  const uint64_t first = paired + 1 - sehat_gsr::kWindowSamples;
+  for (size_t i = 0; i < sehat_gsr::kWindowSamples; ++i) {
+    const size_t slot = static_cast<size_t>((first + i) % sehat_gsr::kWindowSamples);
+    missing += gsr_missing_window[slot];
+    motion += severe_motion_window[slot];
+    if (gsr_missing_window[slot]) {
+      ++gap;
+      if (i == 0 || i + 1 == sehat_gsr::kWindowSamples || gap > 12)
+        unresolved_gsr = true;
+    } else {
+      gap = 0;
+    }
+  }
+  if (!g.valid || missing * 20 > sehat_gsr::kWindowSamples ||
+      unresolved_gsr || motion * 5 > sehat_gsr::kWindowSamples) {
+    Serial.printf("Window %lu: no prediction (GSR or motion QC failed).\n",
+                  static_cast<unsigned long>(window_number));
+    return;
+  }
   if (kSerialDebug) {
     Serial.printf("[DBG] fitur window %lu: GSR valid=%u mean=%.6f var=%.9f "
                   "entropy=%.6f; PPG status=%s HR=%.3f RMSSD=%.3f "
@@ -147,8 +173,13 @@ void reportWindow(const sehat_gsr::Features& g,
                   p.ppg_interpolated_fraction, p.gyro_missing_fraction,
                   p.high_motion_fraction, p.rr_rejected_fraction, p.bpm);
   }
+  // Unavailable PPG is imputed with frozen training medians by the new model
+  // header. RR rejection and raw missingness must clear its availability flag.
+  sehat_ppg::Features model_ppg = p;
+  if (!p.ppg_quality_ok || p.ppg_interpolated_fraction > 0.05f)
+    model_ppg.ppg_available = 0;
   float input[sehat_s1::feature_count] = {};
-  if (!sehat_s1::makeModelInput(g, p, input)) {
+  if (!sehat_s1::makeModelInput(g, model_ppg, input)) {
     Serial.printf("Window %lu: no prediction (invalid GSR or feature vector).\n",
                   static_cast<unsigned long>(window_number));
     return;
@@ -159,7 +190,7 @@ void reportWindow(const sehat_gsr::Features& g,
                   static_cast<unsigned long>(window_number));
     return;
   }
-  Serial.printf("Window %lu: experimental S1 fasting-duration estimate = %.3f hours; "
+  Serial.printf("Window %lu: experimental SEHAT fasting-duration estimate = %.3f hours; "
                 "HR=%.1f; GSR_mean=%.4f; RMSSD=%.1f; PPG available=%u; "
                 "GSR interpolated=%u/%u; PPG status=%s\n",
                 static_cast<unsigned long>(window_number), hours,
@@ -171,6 +202,9 @@ void reportWindow(const sehat_gsr::Features& g,
 }
 
 void addPairedSample(float conductance_us, const PpgPoint& point) {
+  const size_t slot = static_cast<size_t>(paired % sehat_gsr::kWindowSamples);
+  gsr_missing_window[slot] = !std::isfinite(conductance_us) || conductance_us <= 0.0f;
+  severe_motion_window[slot] = std::isfinite(point.gyro) && point.gyro > 100.0f;
   sehat_gsr::Features g;
   sehat_ppg::Features p;
   const bool g_ready = gsr.addSample(conductance_us, g);
@@ -273,12 +307,7 @@ void addSensorSample(float ir, const sehat_gyro::Axes& gyro) {
 void flushRecording() {
   if (!active) return;
   drainPairs();
-  sehat_gsr::Features g;
-  sehat_ppg::Features p;
-  const bool g_ready = gsr.flush(g);
-  const bool p_ready = ppg.flush(p);
-  if (g_ready && p_ready && g.window_samples == p.window_samples)
-    reportWindow(g, p);
+  // The fitted model was trained only on complete 1536-sample windows.
   resetRecording("Recording closed.");
 }
 
@@ -316,9 +345,9 @@ void setup() {
   Serial.println(sehat_gyro::begin() ? "MPU-9250 ready." :
                  "MPU-9250 unavailable; using low-motion PPG filter.");
   Serial.println("Remove GSR electrodes and send 'c' to calibrate.");
-  Serial.println("Attach electrodes/finger and send 's' to start; 'f' flushes, 'r' resets.");
+  Serial.println("Attach electrodes/finger and send 's' to start; 'f' closes, 'r' resets.");
   Serial.println("Debug otomatis tiap 2 detik; kirim 'd' untuk register MAX30102/GSR.");
-  Serial.println("Model output: predicted fasting duration in hours (S1 only).");
+  Serial.println("Model output: estimated fasting duration in hours (SEHAT only).");
 }
 
 // Real-time instantaneous PPG beat detector for live dashboard streaming
@@ -429,14 +458,12 @@ void loop() {
     last_live_status_ms = millis();
     float current_gsr = readGsrUs();
     bool finger_present = (latest_ir_reading > 50000);
-    Serial.printf("LIVE | GSR_us=%.4f | BPM=%.1f | IR=%lu | PPG=%s | Active=%d
-",
+    Serial.printf("LIVE | GSR_us=%.4f | BPM=%.1f | IR=%lu | PPG=%s | Active=%d\n",
                   std::isfinite(current_gsr) ? current_gsr : 0.0f,
                   live_bpm > 35.0f && live_bpm < 220.0f ? live_bpm : 0.0f,
                   latest_ir_reading,
                   finger_present ? "FINGER_DETECTED" : "NO_FINGER",
                   active ? 1 : 0);
-  }
   }
   printDebugStatus();
 }

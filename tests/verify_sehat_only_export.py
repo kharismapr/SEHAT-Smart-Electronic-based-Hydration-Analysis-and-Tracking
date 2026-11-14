@@ -1,7 +1,7 @@
 """Compile and compare the new header with its SEHAT-only sklearn pipeline.
 
 Checks raw features, existing makeModelInput, unavailable PPG, float32 split
-boundaries, invalid arguments, and the original sketch with only include changed.
+boundaries, invalid arguments, and the firmware with the SEHAT-only model.
 Host compilation uses Arduino stubs; this is not an ESP32 hardware build.
 """
 from pathlib import Path
@@ -185,7 +185,7 @@ def main():
         roundtrip_error = float(np.max(np.abs(expected - predict(raw.astype(np.float32)))))
         syntax_directory = directory / "new_model"
         syntax_directory.mkdir()
-        syntax = "passed; original sketch not modified"
+        syntax = "passed; SEHAT-only sketch"
         existing_errors = []
         try:
             syntax_check_firmware(syntax_directory, model_header="et_sehat_only.h")

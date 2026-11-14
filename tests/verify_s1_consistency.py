@@ -58,12 +58,13 @@ def syntax_check_firmware(directory, model_header=None):
     sketch = ROOT / "SEHAT_GSR_PPG_ESP32_ML"
     source = sketch / "SEHAT_GSR_PPG_ESP32_ML.ino"
     if model_header is not None:
-        # Check the actual sketch with only its model include substituted.
         contents = source.read_text(encoding="utf-8")
-        assert contents.count('#include "et_hydration_model_S1.h"') == 1
-        source = Path(directory) / "SEHAT_GSR_PPG_ESP32_ML.ino"
-        source.write_text(contents.replace('#include "et_hydration_model_S1.h"',
-                                           f'#include "{model_header}"'), encoding="utf-8")
+        target = f'#include "{model_header}"'
+        if target not in contents:
+            legacy = '#include "et_hydration_model_S1.h"'
+            assert contents.count(legacy) == 1
+            source = Path(directory) / "SEHAT_GSR_PPG_ESP32_ML.ino"
+            source.write_text(contents.replace(legacy, target), encoding="utf-8")
     subprocess.run(
         ["g++", "-std=c++17", "-fsyntax-only", "-x", "c++", "-I", str(stubs),
          "-I", str(sketch), str(source)],
