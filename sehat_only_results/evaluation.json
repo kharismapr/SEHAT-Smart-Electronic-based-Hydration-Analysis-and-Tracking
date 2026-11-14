@@ -1,0 +1,11 @@
+{
+  "model": "D_SEHAT_only",
+  "n_recordings": 19,
+  "MAE_hr": 2.423099744758807,
+  "RMSE_hr": 2.9785713883879223,
+  "R2": 0.12057562847569236,
+  "target_min_hr": 1.034718,
+  "target_max_hr": 9.629812,
+  "macro_subject_MAE_hr": 2.0509305312807897,
+  "validation": "Leave-One-SEHAT-Subject-Out; mean accepted-window prediction per recording"
+}

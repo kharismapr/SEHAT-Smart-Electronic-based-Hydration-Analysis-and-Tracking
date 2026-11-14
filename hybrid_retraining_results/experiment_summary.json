@@ -1,0 +1,299 @@
+{
+  "best_model": "D_SEHAT_only",
+  "improvement_MAE_vs_Shimmer_hr": 2.1970829734107142,
+  "metrics": [
+    {
+      "model": "A_Shimmer_only",
+      "n_recordings": 15,
+      "MAE_hr": 4.688991861950712,
+      "RMSE_hr": 5.627617732225357,
+      "R2": -1.9466919146287793,
+      "target_min_hr": 1.034718,
+      "target_max_hr": 9.629812,
+      "macro_subject_MAE_hr": 5.424749893033811
+    },
+    {
+      "model": "B_Hybrid_unweighted",
+      "n_recordings": 15,
+      "MAE_hr": 3.210377505076702,
+      "RMSE_hr": 3.610402455324999,
+      "R2": -0.21282121283662936,
+      "target_min_hr": 1.034718,
+      "target_max_hr": 9.629812,
+      "macro_subject_MAE_hr": 3.3220663583647485
+    },
+    {
+      "model": "C_Hybrid_weighted",
+      "n_recordings": 15,
+      "MAE_hr": 2.858798261914794,
+      "RMSE_hr": 3.401707981775307,
+      "R2": -0.07666255910341513,
+      "target_min_hr": 1.034718,
+      "target_max_hr": 9.629812,
+      "macro_subject_MAE_hr": 3.1624603733084276
+    },
+    {
+      "model": "D_SEHAT_only",
+      "n_recordings": 15,
+      "MAE_hr": 2.491908888539998,
+      "RMSE_hr": 2.947611908611428,
+      "R2": 0.1916002741981231,
+      "target_min_hr": 1.034718,
+      "target_max_hr": 9.629812,
+      "macro_subject_MAE_hr": 2.152244789970235
+    }
+  ],
+  "data_counts": [
+    {
+      "device_source": "SEHAT",
+      "files": 15,
+      "subjects": 5,
+      "sessions": 15,
+      "labeled_records": 15,
+      "samples": 230400,
+      "candidate_windows": 285,
+      "accepted_windows": 279,
+      "rejected_windows": 6,
+      "ppg_available_windows": 211,
+      "samples_in_accepted_windows": 225792,
+      "samples_outside_full_windows": 0,
+      "gsr_interpolated_samples": 509,
+      "window_pass_pct": 97.89473684210526,
+      "sample_coverage_pass_pct": 98.0,
+      "usable_recordings": 15,
+      "usable_subjects": 5,
+      "usable_windows": 279
+    },
+    {
+      "device_source": "Shimmer",
+      "files": 124,
+      "subjects": 11,
+      "sessions": 124,
+      "labeled_records": 45,
+      "samples": 10032887,
+      "candidate_windows": 11986,
+      "accepted_windows": 11925,
+      "rejected_windows": 61,
+      "ppg_available_windows": 1743,
+      "samples_in_accepted_windows": 9505536,
+      "samples_outside_full_windows": 505847,
+      "gsr_interpolated_samples": 0,
+      "window_pass_pct": 99.4910729184048,
+      "sample_coverage_pass_pct": 94.7437761433972,
+      "usable_recordings": 39,
+      "usable_subjects": 6,
+      "usable_windows": 4047
+    }
+  ],
+  "per_subject_metrics": [
+    {
+      "model": "A_Shimmer_only",
+      "subject_id": "S12",
+      "n_recordings": 2,
+      "MAE_hr": 5.7759673924403,
+      "RMSE_hr": 6.241690612598207,
+      "R2": null,
+      "target_min_hr": 1.230339,
+      "target_max_hr": 5.275029
+    },
+    {
+      "model": "A_Shimmer_only",
+      "subject_id": "S13",
+      "n_recordings": 7,
+      "MAE_hr": 3.2174757997845163,
+      "RMSE_hr": 4.693090145599453,
+      "R2": -0.781839529997878,
+      "target_min_hr": 1.300721,
+      "target_max_hr": 9.629812
+    },
+    {
+      "model": "A_Shimmer_only",
+      "subject_id": "S14",
+      "n_recordings": 2,
+      "MAE_hr": 7.203221892299655,
+      "RMSE_hr": 7.215399461155579,
+      "R2": null,
+      "target_min_hr": 1.034718,
+      "target_max_hr": 1.962393
+    },
+    {
+      "model": "A_Shimmer_only",
+      "subject_id": "S15",
+      "n_recordings": 2,
+      "MAE_hr": 5.717655633859802,
+      "RMSE_hr": 5.7448131083895975,
+      "R2": null,
+      "target_min_hr": 1.427739,
+      "target_max_hr": 4.480752
+    },
+    {
+      "model": "A_Shimmer_only",
+      "subject_id": "S16",
+      "n_recordings": 2,
+      "MAE_hr": 5.20942874678478,
+      "RMSE_hr": 6.034418647320909,
+      "R2": null,
+      "target_min_hr": 1.371714,
+      "target_max_hr": 6.905173
+    },
+    {
+      "model": "B_Hybrid_unweighted",
+      "subject_id": "S12",
+      "n_recordings": 2,
+      "MAE_hr": 3.647508173263927,
+      "RMSE_hr": 3.9933352407163767,
+      "R2": null,
+      "target_min_hr": 1.230339,
+      "target_max_hr": 5.275029
+    },
+    {
+      "model": "B_Hybrid_unweighted",
+      "subject_id": "S13",
+      "n_recordings": 7,
+      "MAE_hr": 2.9869997985006056,
+      "RMSE_hr": 3.117034523472377,
+      "R2": 0.2139792305268623,
+      "target_min_hr": 1.300721,
+      "target_max_hr": 9.629812
+    },
+    {
+      "model": "B_Hybrid_unweighted",
+      "subject_id": "S14",
+      "n_recordings": 2,
+      "MAE_hr": 3.374601460688579,
+      "RMSE_hr": 3.416036641508232,
+      "R2": null,
+      "target_min_hr": 1.034718,
+      "target_max_hr": 1.962393
+    },
+    {
+      "model": "B_Hybrid_unweighted",
+      "subject_id": "S15",
+      "n_recordings": 2,
+      "MAE_hr": 3.1929083288726483,
+      "RMSE_hr": 4.020054324143605,
+      "R2": null,
+      "target_min_hr": 1.427739,
+      "target_max_hr": 4.480752
+    },
+    {
+      "model": "B_Hybrid_unweighted",
+      "subject_id": "S16",
+      "n_recordings": 2,
+      "MAE_hr": 3.4083140304979844,
+      "RMSE_hr": 4.469900440599396,
+      "R2": null,
+      "target_min_hr": 1.371714,
+      "target_max_hr": 6.905173
+    },
+    {
+      "model": "C_Hybrid_weighted",
+      "subject_id": "S12",
+      "n_recordings": 2,
+      "MAE_hr": 2.6264816066895085,
+      "RMSE_hr": 2.8756338262269496,
+      "R2": null,
+      "target_min_hr": 1.230339,
+      "target_max_hr": 5.275029
+    },
+    {
+      "model": "C_Hybrid_weighted",
+      "subject_id": "S13",
+      "n_recordings": 7,
+      "MAE_hr": 2.251474039127527,
+      "RMSE_hr": 2.4223204624835937,
+      "R2": 0.5253057264161966,
+      "target_min_hr": 1.300721,
+      "target_max_hr": 9.629812
+    },
+    {
+      "model": "C_Hybrid_weighted",
+      "subject_id": "S14",
+      "n_recordings": 2,
+      "MAE_hr": 4.901528222706475,
+      "RMSE_hr": 4.903473869649827,
+      "R2": null,
+      "target_min_hr": 1.034718,
+      "target_max_hr": 1.962393
+    },
+    {
+      "model": "C_Hybrid_weighted",
+      "subject_id": "S15",
+      "n_recordings": 2,
+      "MAE_hr": 2.971713888235026,
+      "RMSE_hr": 4.084894640325068,
+      "R2": null,
+      "target_min_hr": 1.427739,
+      "target_max_hr": 4.480752
+    },
+    {
+      "model": "C_Hybrid_weighted",
+      "subject_id": "S16",
+      "n_recordings": 2,
+      "MAE_hr": 3.0611041097836007,
+      "RMSE_hr": 4.1533975675023465,
+      "R2": null,
+      "target_min_hr": 1.371714,
+      "target_max_hr": 6.905173
+    },
+    {
+      "model": "D_SEHAT_only",
+      "subject_id": "S12",
+      "n_recordings": 2,
+      "MAE_hr": 1.3356820311302413,
+      "RMSE_hr": 1.812011708333347,
+      "R2": null,
+      "target_min_hr": 1.230339,
+      "target_max_hr": 5.275029
+    },
+    {
+      "model": "D_SEHAT_only",
+      "subject_id": "S13",
+      "n_recordings": 7,
+      "MAE_hr": 3.1712370856795244,
+      "RMSE_hr": 3.592151777529043,
+      "R2": -0.043903019479300864,
+      "target_min_hr": 1.300721,
+      "target_max_hr": 9.629812
+    },
+    {
+      "model": "D_SEHAT_only",
+      "subject_id": "S14",
+      "n_recordings": 2,
+      "MAE_hr": 1.1587566516665935,
+      "RMSE_hr": 1.200679426975062,
+      "R2": null,
+      "target_min_hr": 1.034718,
+      "target_max_hr": 1.962393
+    },
+    {
+      "model": "D_SEHAT_only",
+      "subject_id": "S15",
+      "n_recordings": 2,
+      "MAE_hr": 1.975227518215579,
+      "RMSE_hr": 2.002454538336078,
+      "R2": null,
+      "target_min_hr": 1.427739,
+      "target_max_hr": 4.480752
+    },
+    {
+      "model": "D_SEHAT_only",
+      "subject_id": "S16",
+      "n_recordings": 2,
+      "MAE_hr": 3.120320663159238,
+      "RMSE_hr": 3.3564620745646025,
+      "R2": null,
+      "target_min_hr": 1.371714,
+      "target_max_hr": 6.905173
+    }
+  ],
+  "limitations": [
+    "proxy target definitions differ",
+    "five SEHAT subjects; twelve recordings",
+    "selection on same LOSO; exploratory",
+    "no physiological reference or native 50Hz stream",
+    "embedded feature parity not established"
+  ],
+  "config_file": "config.json",
+  "validation_file": "validation.json"
+}

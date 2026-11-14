@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "raw_files_verified": 139,
+  "model_folds_verified": 20,
+  "same_test_recordings_per_model": 15,
+  "feature_count": 9,
+  "tests": [
+    "full windows only",
+    "no train/test subject or recording leakage",
+    "identical A/B/C/D test rows",
+    "frozen train-only imputation",
+    "hierarchical weight mass",
+    "gap boundaries and long gap retention",
+    "metadata override provenance",
+    "F05 retained",
+    "serialized model prediction roundtrip",
+    "metrics recomputed from CSV",
+    "raw SHA256 unchanged"
+  ]
+}

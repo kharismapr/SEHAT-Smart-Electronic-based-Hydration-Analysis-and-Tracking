@@ -1,0 +1,3 @@
+device_source,files,subjects,sessions,labeled_records,samples,candidate_windows,accepted_windows,rejected_windows,ppg_available_windows,samples_in_accepted_windows,samples_outside_full_windows,gsr_interpolated_samples,window_pass_pct,sample_coverage_pass_pct
+SEHAT,15,5,15,15,230400,285,279,6,211,225792,0,509,97.89473684210526,98.0
+Shimmer,124,11,124,45,10032887,11986,11925,61,1743,9505536,505847,0,99.49107291840481,94.74377614339721

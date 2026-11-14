@@ -1,0 +1,68 @@
+device_source,recording_id,window_id,rejection_reasons
+SEHAT,SEHAT:Data Acquisition/sehat_raw_data/20261111175358_S13_S13_F03_raw.csv@2026-11-11 17:53:58,0000:000000000,gsr_missing_over_5pct
+SEHAT,SEHAT:Data Acquisition/sehat_raw_data/20261111175358_S13_S13_F03_raw.csv@2026-11-11 17:53:58,0000:000000768,gsr_missing_over_5pct
+SEHAT,SEHAT:Data Acquisition/sehat_raw_data/20261111175358_S13_S13_F03_raw.csv@2026-11-11 17:53:58,0000:000001536,gsr_missing_over_5pct
+SEHAT,SEHAT:Data Acquisition/sehat_raw_data/20261111175358_S13_S13_F03_raw.csv@2026-11-11 17:53:58,0000:000002304,gsr_missing_over_5pct
+SEHAT,SEHAT:Data Acquisition/sehat_raw_data/20261111175358_S13_S13_F03_raw.csv@2026-11-11 17:53:58,0000:000003072,gsr_missing_over_5pct
+SEHAT,SEHAT:Data Acquisition/sehat_raw_data/20261111175358_S13_S13_F03_raw.csv@2026-11-11 17:53:58,0000:000003840,gsr_missing_over_5pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210408100028Apr8_10_00_fasting.csv@20210408100028,0012:000006912,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210408100028Apr8_10_00_fasting.csv@20210408100028,0013:000004608,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210408100028Apr8_10_00_fasting.csv@20210408100028,0013:000005376,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210413151934Apr13_15_19_fasting.csv@20210413151934,0018:000005376,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210413151934Apr13_15_19_fasting.csv@20210413151934,0018:000006144,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210413151934Apr13_15_19_fasting.csv@20210413151934,0018:000006912,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210413151934Apr13_15_19_fasting.csv@20210413151934,0018:000009216,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210413151934Apr13_15_19_fasting.csv@20210413151934,0018:000009984,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210414154151Apr14_15_41_fasting.csv@20210414154151,0000:000007680,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210415165621April15_1656_fasting.csv@20210415165621,0005:000020736,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210415165621April15_1656_fasting.csv@20210415165621,0005:000021504,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20211002095228Oct2_09_51_fasting.csv@20211002095228,0001:000009984,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/nonfasting/20210825161636Aug25_15_16_notfasting.csv@20210825161636,0003:000003840,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/nonfasting/20210825161636Aug25_15_16_notfasting.csv@20210825161636,0003:000004608,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/nonfasting/20210825161636Aug25_15_16_notfasting.csv@20210825161636,0003:000005376,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/nonfasting/20210915111813September14_11_18_notfasting.csv@20210915111813,0000:000062208,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/nonfasting/20210928100207Sep28_10_01_notfasting.csv@20210928100207,0008:000005376,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/nonfasting/20210930071010Sep30_07_09_notfasting.csv@20210930071010,29156:000039168,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/nonfasting/20210930093126Sep30_09_31_notfasting.csv@20210930093126,0007:000018432,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S10/nonfasting/20211208125944nonfasting_S10.csv@20211208125944,0000:000000768,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S10/nonfasting/20211208125944nonfasting_S10.csv@20211208125944,0000:000001536,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S10/nonfasting/20211208125944nonfasting_S10.csv@20211208125944,0001:000016128,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S2/nonfasting/20211009182021oct09_18_20_nonfasting.csv@20211009182021,0000:000007680,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S2/nonfasting/20211017083845oct17_nonfast_0838.csv@20211017083845,0000:000013824,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S2/nonfasting/20211017083845oct17_nonfast_0838.csv@20211017083845,0000:000014592,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S2/nonfasting/20211019082903oct19_nonfast_0828.csv@20211019082903,0001:000017664,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S2/nonfasting/20211025095453oct25_nonfast_0955.csv@20211025095453,0000:000035328,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S2/nonfasting/20211030190515oct30_nonfast_1905.csv@20211030190515,0000:000011520,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S2/nonfasting/20211030190515oct30_nonfast_1905.csv@20211030190515,0000:000013824,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S2/nonfasting/20211031093739oct31_nonfast_0937.csv@20211031093739,0000:000002304,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S2/nonfasting/20211031093739oct31_nonfast_0937.csv@20211031093739,0000:000003072,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211204080716fasting_S4_20211203230000.csv@20211204080716,0007:000004608,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211204080716fasting_S4_20211203230000.csv@20211204080716,0007:000005376,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211204080716fasting_S4_20211203230000.csv@20211204080716,0007:000006912,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211204080716fasting_S4_20211203230000.csv@20211204080716,0007:000008448,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211204080716fasting_S4_20211203230000.csv@20211204080716,0007:000009216,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211204080716fasting_S4_20211203230000.csv@20211204080716,0007:000009984,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211204080716fasting_S4_20211203230000.csv@20211204080716,0007:000010752,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211204080716fasting_S4_20211203230000.csv@20211204080716,0007:000011520,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211204080716fasting_S4_20211203230000.csv@20211204080716,0007:000012288,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211215134443fasting_S4_20211215113000.csv@20211215134443,0000:000000000,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211215134443fasting_S4_20211215113000.csv@20211215134443,0000:000002304,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/nonfasting/20211215095812nonfasting_S4.csv@20211215095812,0005:000006144,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/nonfasting/20211215095812nonfasting_S4.csv@20211215095812,0005:000006912,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/nonfasting/20211215134412nonfasting_S4.csv@20211215134412,0000:000000000,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S5/nonfasting/20211203124815nonfasting_S5.csv@20211203124815,0001:000023808,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S5/nonfasting/20211203124815nonfasting_S5.csv@20211203124815,0001:000024576,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S5/nonfasting/20211203124815nonfasting_S5.csv@20211203124815,0001:000025344,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S5/nonfasting/20211203124815nonfasting_S5.csv@20211203124815,0001:000026112,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S5/nonfasting/20211203124815nonfasting_S5.csv@20211203124815,0001:000026880,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S5/nonfasting/20211203124815nonfasting_S5.csv@20211203124815,0001:000028416,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S5/nonfasting/20211203124815nonfasting_S5.csv@20211203124815,0001:000029952,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S5/nonfasting/20211203124815nonfasting_S5.csv@20211203124815,0001:000030720,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S5/nonfasting/20211203124815nonfasting_S5.csv@20211203124815,0001:000033792,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S5/nonfasting/20211203124815nonfasting_S5.csv@20211203124815,0001:000035328,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S5/nonfasting/20211203124815nonfasting_S5.csv@20211203124815,0001:000036096,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S5/nonfasting/20211203124815nonfasting_S5.csv@20211203124815,0002:000000768,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S5/nonfasting/20211203124815nonfasting_S5.csv@20211203124815,0004:000006144,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S5/nonfasting/20211203124815nonfasting_S5.csv@20211203124815,0004:000009984,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S6/fasting/20211211100619fasting_S6_20211211000000.csv@20211211100619,0001:000016128,severe_motion_over_20pct
+Shimmer,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S6/fasting/20211211100619fasting_S6_20211211000000.csv@20211211100619,0002:000000768,severe_motion_over_20pct

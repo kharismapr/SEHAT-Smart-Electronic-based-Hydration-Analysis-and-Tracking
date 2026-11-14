@@ -1,0 +1,4 @@
+model,contrast,subjects,delta_macro_MAE_hr,lower95,upper95,subjects_improved,bootstrap_replicates,caution
+B_Hybrid_unweighted,"model minus A; macro subject MAE, hours",5,-2.1026835346690618,-3.1485559466371944,-1.0034580050251365,5,10000,"exploratory five-subject bootstrap, not confirmatory; correlated sessions retained together"
+C_Hybrid_weighted,"model minus A; macro subject MAE, hours",5,-2.262289519725383,-2.826650553649979,-1.5584543329193847,5,10000,"exploratory five-subject bootstrap, not confirmatory; correlated sessions retained together"
+D_SEHAT_only,"model minus A; macro subject MAE, hours",5,-3.2725051030635752,-4.942385863906092,-1.3336219174501152,5,10000,"exploratory five-subject bootstrap, not confirmatory; correlated sessions retained together"

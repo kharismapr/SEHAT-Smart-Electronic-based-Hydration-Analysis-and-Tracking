@@ -29,7 +29,7 @@ def compile_harness(output):
     )
 
 
-def syntax_check_firmware(directory):
+def syntax_check_firmware(directory, model_header=None):
     """Compile the .ino as C++ against API stubs; this is not an Arduino build."""
     stubs = Path(directory) / "arduino_stubs"
     stubs.mkdir()
@@ -52,12 +52,22 @@ def syntax_check_firmware(directory):
         "constexpr int I2C_SPEED_STANDARD=0; struct MAX30105 { "
         "bool begin(WireClass&,int); void setup(int,int,int,int,int,int); "
         "void disableFIFORollover(); void clearFIFO(); uint16_t check(); "
-        "bool available(); uint32_t getFIFOIR(); void nextSample();};\n", encoding="utf-8")
+        "bool available(); uint32_t getFIFOIR(); void nextSample(); "
+        "uint8_t readPartID(); uint8_t readRegister8(uint8_t,uint8_t); "
+        "uint8_t getWritePointer(); uint8_t getReadPointer();};\n", encoding="utf-8")
     sketch = ROOT / "SEHAT_GSR_PPG_ESP32_ML"
+    source = sketch / "SEHAT_GSR_PPG_ESP32_ML.ino"
+    if model_header is not None:
+        # Check the actual sketch with only its model include substituted.
+        contents = source.read_text(encoding="utf-8")
+        assert contents.count('#include "et_hydration_model_S1.h"') == 1
+        source = Path(directory) / "SEHAT_GSR_PPG_ESP32_ML.ino"
+        source.write_text(contents.replace('#include "et_hydration_model_S1.h"',
+                                           f'#include "{model_header}"'), encoding="utf-8")
     subprocess.run(
         ["g++", "-std=c++17", "-fsyntax-only", "-x", "c++", "-I", str(stubs),
-         "-I", str(sketch), str(sketch / "SEHAT_GSR_PPG_ESP32_ML.ino")],
-        check=True, cwd=ROOT,
+         "-I", str(sketch), str(source)],
+        check=True, cwd=ROOT, capture_output=True, text=True,
     )
     print("Firmware .ino: host C++ syntax check passed (Arduino API stubs)")
 

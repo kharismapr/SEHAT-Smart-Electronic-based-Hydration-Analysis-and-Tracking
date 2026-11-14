@@ -1,0 +1,256 @@
+device_source,subject_id,recording_id,windows,total_weight,fold,test_subject
+SEHAT,S13,SEHAT:Data Acquisition/sehat_raw_data/20261107115242_S13_S13_F01_raw.csv@2026-11-07 11:52:42,19,76.57142857142857,1,S12
+SEHAT,S13,SEHAT:Data Acquisition/sehat_raw_data/20261107132702_S13_S13_F02_raw.csv@2026-11-07 13:27:02,19,76.57142857142857,1,S12
+SEHAT,S13,SEHAT:Data Acquisition/sehat_raw_data/20261111175358_S13_S13_F03_raw.csv@2026-11-11 17:53:58,13,76.57142857142858,1,S12
+SEHAT,S13,SEHAT:Data Acquisition/sehat_raw_data/20261112060931_S13_S13_F05_raw.csv@2026-11-12 06:09:31,19,76.57142857142857,1,S12
+SEHAT,S13,SEHAT:Data Acquisition/sehat_raw_data/20261113062805_S13_S13_F06_raw.csv@2026-11-13 06:28:05,19,76.57142857142857,1,S12
+SEHAT,S13,SEHAT:Data Acquisition/sehat_raw_data/20261113070600_S13_S13_F07_raw.csv@2026-11-13 07:06:00,19,76.57142857142857,1,S12
+SEHAT,S13,SEHAT:Data Acquisition/sehat_raw_data/20261113073747_S13_S13_F08_raw.csv@2026-11-13 07:37:47,19,76.57142857142857,1,S12
+SEHAT,S14,SEHAT:Data Acquisition/sehat_raw_data/20261107113244_S14_S14_F01_raw.csv@2026-11-07 11:32:44,19,268.0,1,S12
+SEHAT,S14,SEHAT:Data Acquisition/sehat_raw_data/20261107130204_S14_S14_F02_raw.csv@2026-11-07 13:02:04,19,268.0,1,S12
+SEHAT,S15,SEHAT:Data Acquisition/sehat_raw_data/20261107115850_S15_S15_F01_raw.csv@2026-11-07 11:58:50,19,268.0,1,S12
+SEHAT,S15,SEHAT:Data Acquisition/sehat_raw_data/20261107133439_S15_S15_F02_raw.csv@2026-11-07 13:34:39,19,268.0,1,S12
+SEHAT,S16,SEHAT:Data Acquisition/sehat_raw_data/20261107114018_S16_S16_F01_raw.csv@2026-11-07 11:40:18,19,268.0,1,S12
+SEHAT,S16,SEHAT:Data Acquisition/sehat_raw_data/20261107130818_S16_S16_F02_raw.csv@2026-11-07 13:08:18,19,268.0,1,S12
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210408100028Apr8_10_00_fasting.csv@20210408100028,482,17.015873015873016,1,S12
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210413094911Apr13_09_49_fasting.csv@20210413094911,19,17.015873015873016,1,S12
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210413151934Apr13_15_19_fasting.csv@20210413151934,442,17.015873015873016,1,S12
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210414154151Apr14_15_41_fasting.csv@20210414154151,29,17.015873015873016,1,S12
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210415081723Apr15_08_17_fasting.csv@20210415081723,13,17.015873015873016,1,S12
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210415165621April15_1656_fasting.csv@20210415165621,171,17.015873015873016,1,S12
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210417163344April17_16_33_fasting.csv@20210417163344,35,17.015873015873016,1,S12
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210418120309April18_12_02_fasting.csv@20210418120309,35,17.015873015873016,1,S12
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210419082504April19_08_25_fasting.csv@20210419082504,112,17.015873015873016,1,S12
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210420094756April20_09_47_fasting.csv@20210420094756,134,17.015873015873016,1,S12
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210421093411April21_09_34_fasting.csv@20210421093411,5,17.015873015873016,1,S12
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210421155031April21_15_50_fasting.csv@20210421155031,2,17.015873015873016,1,S12
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210422071136April22_07_11_fasting.csv@20210422071136,55,17.015873015873016,1,S12
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210422175355April22_17_53_fasting.csv@20210422175355,63,17.015873015873016,1,S12
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210424132222April24_13_22_fasting.csv@20210424132222,25,17.015873015873016,1,S12
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210424165315April24_16_53_fasting.csv@20210424165315,20,17.015873015873016,1,S12
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210425081152April25_0811_fasting.csv@20210425081152,49,17.015873015873016,1,S12
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210922053821Sep22_05_38_fasting.csv@20210922053821,278,17.015873015873016,1,S12
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210925100331Sep25_10_03_fasting.csv@20210925100331,72,17.015873015873016,1,S12
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210929052647Sep29_05_26_fasting.csv@20210929052647,77,17.015873015873016,1,S12
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20211002095228Oct2_09_51_fasting.csv@20211002095228,189,17.015873015873016,1,S12
+Shimmer,S2,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S2/fasting/20211007164123oct07_04_41_fasting.csv@20211007164123,54,89.33333333333333,1,S12
+Shimmer,S2,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S2/fasting/20211011115220oct11_11_52_fasting.csv@20211011115220,66,89.33333333333334,1,S12
+Shimmer,S2,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S2/fasting/20211014123108oct14_12_31_fasting.csv@20211014123108,56,89.33333333333334,1,S12
+Shimmer,S2,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S2/fasting/20211014170751oct14_17_07_fasting.csv@20211014170751,16,89.33333333333333,1,S12
+Shimmer,S3,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S3/fasting/20211129134509November29_fasting.csv@20211129134509,185,89.33333333333333,1,S12
+Shimmer,S3,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S3/fasting/20211129160847November29_fasting.csv@20211129160847,43,89.33333333333334,1,S12
+Shimmer,S3,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S3/fasting/20211129162445November29_fasting.csv@20211129162445,41,89.33333333333333,1,S12
+Shimmer,S3,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S3/fasting/20211129164759November29_fasting.csv@20211129164759,48,89.33333333333334,1,S12
+Shimmer,S4,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211203103200fasting_S4_20211202230000.csv@20211203103200,140,59.55555555555556,1,S12
+Shimmer,S4,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211204080716fasting_S4_20211203230000.csv@20211204080716,294,59.55555555555556,1,S12
+Shimmer,S4,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211205041234fasting_S4_20211204210000.csv@20211205041234,211,59.55555555555556,1,S12
+Shimmer,S4,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211209064440fasting_S4_202112090000.csv@20211209064440,113,59.55555555555556,1,S12
+Shimmer,S4,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211211084723fasting_S4_20211211003000.csv@20211211084723,127,59.55555555555556,1,S12
+Shimmer,S4,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211215134443fasting_S4_20211215113000.csv@20211215134443,191,59.55555555555556,1,S12
+Shimmer,S5,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S5/fasting/20211204093522fasting20211203230000_S5.csv@20211204093522,41,178.66666666666666,1,S12
+Shimmer,S5,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S5/fasting/20211211094707fasting_S5_20211211000000.csv@20211211094707,36,178.66666666666666,1,S12
+Shimmer,S6,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S6/fasting/20211204100231fasting_S6_20211203230000.csv@20211204100231,33,178.66666666666669,1,S12
+Shimmer,S6,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S6/fasting/20211211100619fasting_S6_20211211000000.csv@20211211100619,45,178.66666666666666,1,S12
+SEHAT,S12,SEHAT:Data Acquisition/sehat_raw_data/20261107114630_S12_S12_F01_raw.csv@2026-11-07 11:46:30,19,262.4375,2,S13
+SEHAT,S12,SEHAT:Data Acquisition/sehat_raw_data/20261107131849_S12_S12_F02_raw.csv@2026-11-07 13:18:49,19,262.4375,2,S13
+SEHAT,S14,SEHAT:Data Acquisition/sehat_raw_data/20261107113244_S14_S14_F01_raw.csv@2026-11-07 11:32:44,19,262.4375,2,S13
+SEHAT,S14,SEHAT:Data Acquisition/sehat_raw_data/20261107130204_S14_S14_F02_raw.csv@2026-11-07 13:02:04,19,262.4375,2,S13
+SEHAT,S15,SEHAT:Data Acquisition/sehat_raw_data/20261107115850_S15_S15_F01_raw.csv@2026-11-07 11:58:50,19,262.4375,2,S13
+SEHAT,S15,SEHAT:Data Acquisition/sehat_raw_data/20261107133439_S15_S15_F02_raw.csv@2026-11-07 13:34:39,19,262.4375,2,S13
+SEHAT,S16,SEHAT:Data Acquisition/sehat_raw_data/20261107114018_S16_S16_F01_raw.csv@2026-11-07 11:40:18,19,262.4375,2,S13
+SEHAT,S16,SEHAT:Data Acquisition/sehat_raw_data/20261107130818_S16_S16_F02_raw.csv@2026-11-07 13:08:18,19,262.4375,2,S13
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210408100028Apr8_10_00_fasting.csv@20210408100028,482,16.662698412698415,2,S13
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210413094911Apr13_09_49_fasting.csv@20210413094911,19,16.66269841269841,2,S13
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210413151934Apr13_15_19_fasting.csv@20210413151934,442,16.66269841269841,2,S13
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210414154151Apr14_15_41_fasting.csv@20210414154151,29,16.66269841269841,2,S13
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210415081723Apr15_08_17_fasting.csv@20210415081723,13,16.662698412698415,2,S13
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210415165621April15_1656_fasting.csv@20210415165621,171,16.66269841269841,2,S13
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210417163344April17_16_33_fasting.csv@20210417163344,35,16.662698412698415,2,S13
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210418120309April18_12_02_fasting.csv@20210418120309,35,16.662698412698415,2,S13
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210419082504April19_08_25_fasting.csv@20210419082504,112,16.662698412698415,2,S13
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210420094756April20_09_47_fasting.csv@20210420094756,134,16.66269841269841,2,S13
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210421093411April21_09_34_fasting.csv@20210421093411,5,16.662698412698415,2,S13
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210421155031April21_15_50_fasting.csv@20210421155031,2,16.66269841269841,2,S13
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210422071136April22_07_11_fasting.csv@20210422071136,55,16.662698412698415,2,S13
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210422175355April22_17_53_fasting.csv@20210422175355,63,16.66269841269841,2,S13
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210424132222April24_13_22_fasting.csv@20210424132222,25,16.66269841269841,2,S13
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210424165315April24_16_53_fasting.csv@20210424165315,20,16.662698412698415,2,S13
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210425081152April25_0811_fasting.csv@20210425081152,49,16.662698412698415,2,S13
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210922053821Sep22_05_38_fasting.csv@20210922053821,278,16.662698412698415,2,S13
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210925100331Sep25_10_03_fasting.csv@20210925100331,72,16.66269841269841,2,S13
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210929052647Sep29_05_26_fasting.csv@20210929052647,77,16.66269841269841,2,S13
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20211002095228Oct2_09_51_fasting.csv@20211002095228,189,16.66269841269841,2,S13
+Shimmer,S2,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S2/fasting/20211007164123oct07_04_41_fasting.csv@20211007164123,54,87.47916666666667,2,S13
+Shimmer,S2,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S2/fasting/20211011115220oct11_11_52_fasting.csv@20211011115220,66,87.47916666666666,2,S13
+Shimmer,S2,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S2/fasting/20211014123108oct14_12_31_fasting.csv@20211014123108,56,87.47916666666667,2,S13
+Shimmer,S2,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S2/fasting/20211014170751oct14_17_07_fasting.csv@20211014170751,16,87.47916666666667,2,S13
+Shimmer,S3,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S3/fasting/20211129134509November29_fasting.csv@20211129134509,185,87.47916666666667,2,S13
+Shimmer,S3,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S3/fasting/20211129160847November29_fasting.csv@20211129160847,43,87.47916666666667,2,S13
+Shimmer,S3,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S3/fasting/20211129162445November29_fasting.csv@20211129162445,41,87.47916666666667,2,S13
+Shimmer,S3,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S3/fasting/20211129164759November29_fasting.csv@20211129164759,48,87.47916666666666,2,S13
+Shimmer,S4,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211203103200fasting_S4_20211202230000.csv@20211203103200,140,58.31944444444445,2,S13
+Shimmer,S4,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211204080716fasting_S4_20211203230000.csv@20211204080716,294,58.31944444444444,2,S13
+Shimmer,S4,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211205041234fasting_S4_20211204210000.csv@20211205041234,211,58.31944444444445,2,S13
+Shimmer,S4,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211209064440fasting_S4_202112090000.csv@20211209064440,113,58.31944444444444,2,S13
+Shimmer,S4,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211211084723fasting_S4_20211211003000.csv@20211211084723,127,58.31944444444444,2,S13
+Shimmer,S4,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211215134443fasting_S4_20211215113000.csv@20211215134443,191,58.31944444444444,2,S13
+Shimmer,S5,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S5/fasting/20211204093522fasting20211203230000_S5.csv@20211204093522,41,174.95833333333334,2,S13
+Shimmer,S5,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S5/fasting/20211211094707fasting_S5_20211211000000.csv@20211211094707,36,174.95833333333331,2,S13
+Shimmer,S6,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S6/fasting/20211204100231fasting_S6_20211203230000.csv@20211204100231,33,174.95833333333331,2,S13
+Shimmer,S6,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S6/fasting/20211211100619fasting_S6_20211211000000.csv@20211211100619,45,174.95833333333334,2,S13
+SEHAT,S12,SEHAT:Data Acquisition/sehat_raw_data/20261107114630_S12_S12_F01_raw.csv@2026-11-07 11:46:30,19,268.0,3,S14
+SEHAT,S12,SEHAT:Data Acquisition/sehat_raw_data/20261107131849_S12_S12_F02_raw.csv@2026-11-07 13:18:49,19,268.0,3,S14
+SEHAT,S13,SEHAT:Data Acquisition/sehat_raw_data/20261107115242_S13_S13_F01_raw.csv@2026-11-07 11:52:42,19,76.57142857142857,3,S14
+SEHAT,S13,SEHAT:Data Acquisition/sehat_raw_data/20261107132702_S13_S13_F02_raw.csv@2026-11-07 13:27:02,19,76.57142857142857,3,S14
+SEHAT,S13,SEHAT:Data Acquisition/sehat_raw_data/20261111175358_S13_S13_F03_raw.csv@2026-11-11 17:53:58,13,76.57142857142858,3,S14
+SEHAT,S13,SEHAT:Data Acquisition/sehat_raw_data/20261112060931_S13_S13_F05_raw.csv@2026-11-12 06:09:31,19,76.57142857142857,3,S14
+SEHAT,S13,SEHAT:Data Acquisition/sehat_raw_data/20261113062805_S13_S13_F06_raw.csv@2026-11-13 06:28:05,19,76.57142857142857,3,S14
+SEHAT,S13,SEHAT:Data Acquisition/sehat_raw_data/20261113070600_S13_S13_F07_raw.csv@2026-11-13 07:06:00,19,76.57142857142857,3,S14
+SEHAT,S13,SEHAT:Data Acquisition/sehat_raw_data/20261113073747_S13_S13_F08_raw.csv@2026-11-13 07:37:47,19,76.57142857142857,3,S14
+SEHAT,S15,SEHAT:Data Acquisition/sehat_raw_data/20261107115850_S15_S15_F01_raw.csv@2026-11-07 11:58:50,19,268.0,3,S14
+SEHAT,S15,SEHAT:Data Acquisition/sehat_raw_data/20261107133439_S15_S15_F02_raw.csv@2026-11-07 13:34:39,19,268.0,3,S14
+SEHAT,S16,SEHAT:Data Acquisition/sehat_raw_data/20261107114018_S16_S16_F01_raw.csv@2026-11-07 11:40:18,19,268.0,3,S14
+SEHAT,S16,SEHAT:Data Acquisition/sehat_raw_data/20261107130818_S16_S16_F02_raw.csv@2026-11-07 13:08:18,19,268.0,3,S14
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210408100028Apr8_10_00_fasting.csv@20210408100028,482,17.015873015873016,3,S14
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210413094911Apr13_09_49_fasting.csv@20210413094911,19,17.015873015873016,3,S14
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210413151934Apr13_15_19_fasting.csv@20210413151934,442,17.015873015873016,3,S14
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210414154151Apr14_15_41_fasting.csv@20210414154151,29,17.015873015873016,3,S14
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210415081723Apr15_08_17_fasting.csv@20210415081723,13,17.015873015873016,3,S14
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210415165621April15_1656_fasting.csv@20210415165621,171,17.015873015873016,3,S14
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210417163344April17_16_33_fasting.csv@20210417163344,35,17.015873015873016,3,S14
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210418120309April18_12_02_fasting.csv@20210418120309,35,17.015873015873016,3,S14
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210419082504April19_08_25_fasting.csv@20210419082504,112,17.015873015873016,3,S14
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210420094756April20_09_47_fasting.csv@20210420094756,134,17.015873015873016,3,S14
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210421093411April21_09_34_fasting.csv@20210421093411,5,17.015873015873016,3,S14
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210421155031April21_15_50_fasting.csv@20210421155031,2,17.015873015873016,3,S14
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210422071136April22_07_11_fasting.csv@20210422071136,55,17.015873015873016,3,S14
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210422175355April22_17_53_fasting.csv@20210422175355,63,17.015873015873016,3,S14
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210424132222April24_13_22_fasting.csv@20210424132222,25,17.015873015873016,3,S14
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210424165315April24_16_53_fasting.csv@20210424165315,20,17.015873015873016,3,S14
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210425081152April25_0811_fasting.csv@20210425081152,49,17.015873015873016,3,S14
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210922053821Sep22_05_38_fasting.csv@20210922053821,278,17.015873015873016,3,S14
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210925100331Sep25_10_03_fasting.csv@20210925100331,72,17.015873015873016,3,S14
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210929052647Sep29_05_26_fasting.csv@20210929052647,77,17.015873015873016,3,S14
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20211002095228Oct2_09_51_fasting.csv@20211002095228,189,17.015873015873016,3,S14
+Shimmer,S2,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S2/fasting/20211007164123oct07_04_41_fasting.csv@20211007164123,54,89.33333333333333,3,S14
+Shimmer,S2,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S2/fasting/20211011115220oct11_11_52_fasting.csv@20211011115220,66,89.33333333333334,3,S14
+Shimmer,S2,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S2/fasting/20211014123108oct14_12_31_fasting.csv@20211014123108,56,89.33333333333334,3,S14
+Shimmer,S2,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S2/fasting/20211014170751oct14_17_07_fasting.csv@20211014170751,16,89.33333333333333,3,S14
+Shimmer,S3,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S3/fasting/20211129134509November29_fasting.csv@20211129134509,185,89.33333333333333,3,S14
+Shimmer,S3,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S3/fasting/20211129160847November29_fasting.csv@20211129160847,43,89.33333333333334,3,S14
+Shimmer,S3,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S3/fasting/20211129162445November29_fasting.csv@20211129162445,41,89.33333333333333,3,S14
+Shimmer,S3,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S3/fasting/20211129164759November29_fasting.csv@20211129164759,48,89.33333333333334,3,S14
+Shimmer,S4,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211203103200fasting_S4_20211202230000.csv@20211203103200,140,59.55555555555556,3,S14
+Shimmer,S4,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211204080716fasting_S4_20211203230000.csv@20211204080716,294,59.55555555555556,3,S14
+Shimmer,S4,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211205041234fasting_S4_20211204210000.csv@20211205041234,211,59.55555555555556,3,S14
+Shimmer,S4,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211209064440fasting_S4_202112090000.csv@20211209064440,113,59.55555555555556,3,S14
+Shimmer,S4,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211211084723fasting_S4_20211211003000.csv@20211211084723,127,59.55555555555556,3,S14
+Shimmer,S4,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211215134443fasting_S4_20211215113000.csv@20211215134443,191,59.55555555555556,3,S14
+Shimmer,S5,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S5/fasting/20211204093522fasting20211203230000_S5.csv@20211204093522,41,178.66666666666666,3,S14
+Shimmer,S5,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S5/fasting/20211211094707fasting_S5_20211211000000.csv@20211211094707,36,178.66666666666666,3,S14
+Shimmer,S6,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S6/fasting/20211204100231fasting_S6_20211203230000.csv@20211204100231,33,178.66666666666669,3,S14
+Shimmer,S6,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S6/fasting/20211211100619fasting_S6_20211211000000.csv@20211211100619,45,178.66666666666666,3,S14
+SEHAT,S12,SEHAT:Data Acquisition/sehat_raw_data/20261107114630_S12_S12_F01_raw.csv@2026-11-07 11:46:30,19,268.0,4,S15
+SEHAT,S12,SEHAT:Data Acquisition/sehat_raw_data/20261107131849_S12_S12_F02_raw.csv@2026-11-07 13:18:49,19,268.0,4,S15
+SEHAT,S13,SEHAT:Data Acquisition/sehat_raw_data/20261107115242_S13_S13_F01_raw.csv@2026-11-07 11:52:42,19,76.57142857142857,4,S15
+SEHAT,S13,SEHAT:Data Acquisition/sehat_raw_data/20261107132702_S13_S13_F02_raw.csv@2026-11-07 13:27:02,19,76.57142857142857,4,S15
+SEHAT,S13,SEHAT:Data Acquisition/sehat_raw_data/20261111175358_S13_S13_F03_raw.csv@2026-11-11 17:53:58,13,76.57142857142858,4,S15
+SEHAT,S13,SEHAT:Data Acquisition/sehat_raw_data/20261112060931_S13_S13_F05_raw.csv@2026-11-12 06:09:31,19,76.57142857142857,4,S15
+SEHAT,S13,SEHAT:Data Acquisition/sehat_raw_data/20261113062805_S13_S13_F06_raw.csv@2026-11-13 06:28:05,19,76.57142857142857,4,S15
+SEHAT,S13,SEHAT:Data Acquisition/sehat_raw_data/20261113070600_S13_S13_F07_raw.csv@2026-11-13 07:06:00,19,76.57142857142857,4,S15
+SEHAT,S13,SEHAT:Data Acquisition/sehat_raw_data/20261113073747_S13_S13_F08_raw.csv@2026-11-13 07:37:47,19,76.57142857142857,4,S15
+SEHAT,S14,SEHAT:Data Acquisition/sehat_raw_data/20261107113244_S14_S14_F01_raw.csv@2026-11-07 11:32:44,19,268.0,4,S15
+SEHAT,S14,SEHAT:Data Acquisition/sehat_raw_data/20261107130204_S14_S14_F02_raw.csv@2026-11-07 13:02:04,19,268.0,4,S15
+SEHAT,S16,SEHAT:Data Acquisition/sehat_raw_data/20261107114018_S16_S16_F01_raw.csv@2026-11-07 11:40:18,19,268.0,4,S15
+SEHAT,S16,SEHAT:Data Acquisition/sehat_raw_data/20261107130818_S16_S16_F02_raw.csv@2026-11-07 13:08:18,19,268.0,4,S15
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210408100028Apr8_10_00_fasting.csv@20210408100028,482,17.015873015873016,4,S15
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210413094911Apr13_09_49_fasting.csv@20210413094911,19,17.015873015873016,4,S15
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210413151934Apr13_15_19_fasting.csv@20210413151934,442,17.015873015873016,4,S15
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210414154151Apr14_15_41_fasting.csv@20210414154151,29,17.015873015873016,4,S15
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210415081723Apr15_08_17_fasting.csv@20210415081723,13,17.015873015873016,4,S15
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210415165621April15_1656_fasting.csv@20210415165621,171,17.015873015873016,4,S15
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210417163344April17_16_33_fasting.csv@20210417163344,35,17.015873015873016,4,S15
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210418120309April18_12_02_fasting.csv@20210418120309,35,17.015873015873016,4,S15
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210419082504April19_08_25_fasting.csv@20210419082504,112,17.015873015873016,4,S15
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210420094756April20_09_47_fasting.csv@20210420094756,134,17.015873015873016,4,S15
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210421093411April21_09_34_fasting.csv@20210421093411,5,17.015873015873016,4,S15
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210421155031April21_15_50_fasting.csv@20210421155031,2,17.015873015873016,4,S15
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210422071136April22_07_11_fasting.csv@20210422071136,55,17.015873015873016,4,S15
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210422175355April22_17_53_fasting.csv@20210422175355,63,17.015873015873016,4,S15
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210424132222April24_13_22_fasting.csv@20210424132222,25,17.015873015873016,4,S15
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210424165315April24_16_53_fasting.csv@20210424165315,20,17.015873015873016,4,S15
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210425081152April25_0811_fasting.csv@20210425081152,49,17.015873015873016,4,S15
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210922053821Sep22_05_38_fasting.csv@20210922053821,278,17.015873015873016,4,S15
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210925100331Sep25_10_03_fasting.csv@20210925100331,72,17.015873015873016,4,S15
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210929052647Sep29_05_26_fasting.csv@20210929052647,77,17.015873015873016,4,S15
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20211002095228Oct2_09_51_fasting.csv@20211002095228,189,17.015873015873016,4,S15
+Shimmer,S2,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S2/fasting/20211007164123oct07_04_41_fasting.csv@20211007164123,54,89.33333333333333,4,S15
+Shimmer,S2,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S2/fasting/20211011115220oct11_11_52_fasting.csv@20211011115220,66,89.33333333333334,4,S15
+Shimmer,S2,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S2/fasting/20211014123108oct14_12_31_fasting.csv@20211014123108,56,89.33333333333334,4,S15
+Shimmer,S2,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S2/fasting/20211014170751oct14_17_07_fasting.csv@20211014170751,16,89.33333333333333,4,S15
+Shimmer,S3,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S3/fasting/20211129134509November29_fasting.csv@20211129134509,185,89.33333333333333,4,S15
+Shimmer,S3,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S3/fasting/20211129160847November29_fasting.csv@20211129160847,43,89.33333333333334,4,S15
+Shimmer,S3,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S3/fasting/20211129162445November29_fasting.csv@20211129162445,41,89.33333333333333,4,S15
+Shimmer,S3,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S3/fasting/20211129164759November29_fasting.csv@20211129164759,48,89.33333333333334,4,S15
+Shimmer,S4,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211203103200fasting_S4_20211202230000.csv@20211203103200,140,59.55555555555556,4,S15
+Shimmer,S4,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211204080716fasting_S4_20211203230000.csv@20211204080716,294,59.55555555555556,4,S15
+Shimmer,S4,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211205041234fasting_S4_20211204210000.csv@20211205041234,211,59.55555555555556,4,S15
+Shimmer,S4,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211209064440fasting_S4_202112090000.csv@20211209064440,113,59.55555555555556,4,S15
+Shimmer,S4,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211211084723fasting_S4_20211211003000.csv@20211211084723,127,59.55555555555556,4,S15
+Shimmer,S4,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211215134443fasting_S4_20211215113000.csv@20211215134443,191,59.55555555555556,4,S15
+Shimmer,S5,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S5/fasting/20211204093522fasting20211203230000_S5.csv@20211204093522,41,178.66666666666666,4,S15
+Shimmer,S5,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S5/fasting/20211211094707fasting_S5_20211211000000.csv@20211211094707,36,178.66666666666666,4,S15
+Shimmer,S6,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S6/fasting/20211204100231fasting_S6_20211203230000.csv@20211204100231,33,178.66666666666669,4,S15
+Shimmer,S6,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S6/fasting/20211211100619fasting_S6_20211211000000.csv@20211211100619,45,178.66666666666666,4,S15
+SEHAT,S12,SEHAT:Data Acquisition/sehat_raw_data/20261107114630_S12_S12_F01_raw.csv@2026-11-07 11:46:30,19,268.0,5,S16
+SEHAT,S12,SEHAT:Data Acquisition/sehat_raw_data/20261107131849_S12_S12_F02_raw.csv@2026-11-07 13:18:49,19,268.0,5,S16
+SEHAT,S13,SEHAT:Data Acquisition/sehat_raw_data/20261107115242_S13_S13_F01_raw.csv@2026-11-07 11:52:42,19,76.57142857142857,5,S16
+SEHAT,S13,SEHAT:Data Acquisition/sehat_raw_data/20261107132702_S13_S13_F02_raw.csv@2026-11-07 13:27:02,19,76.57142857142857,5,S16
+SEHAT,S13,SEHAT:Data Acquisition/sehat_raw_data/20261111175358_S13_S13_F03_raw.csv@2026-11-11 17:53:58,13,76.57142857142858,5,S16
+SEHAT,S13,SEHAT:Data Acquisition/sehat_raw_data/20261112060931_S13_S13_F05_raw.csv@2026-11-12 06:09:31,19,76.57142857142857,5,S16
+SEHAT,S13,SEHAT:Data Acquisition/sehat_raw_data/20261113062805_S13_S13_F06_raw.csv@2026-11-13 06:28:05,19,76.57142857142857,5,S16
+SEHAT,S13,SEHAT:Data Acquisition/sehat_raw_data/20261113070600_S13_S13_F07_raw.csv@2026-11-13 07:06:00,19,76.57142857142857,5,S16
+SEHAT,S13,SEHAT:Data Acquisition/sehat_raw_data/20261113073747_S13_S13_F08_raw.csv@2026-11-13 07:37:47,19,76.57142857142857,5,S16
+SEHAT,S14,SEHAT:Data Acquisition/sehat_raw_data/20261107113244_S14_S14_F01_raw.csv@2026-11-07 11:32:44,19,268.0,5,S16
+SEHAT,S14,SEHAT:Data Acquisition/sehat_raw_data/20261107130204_S14_S14_F02_raw.csv@2026-11-07 13:02:04,19,268.0,5,S16
+SEHAT,S15,SEHAT:Data Acquisition/sehat_raw_data/20261107115850_S15_S15_F01_raw.csv@2026-11-07 11:58:50,19,268.0,5,S16
+SEHAT,S15,SEHAT:Data Acquisition/sehat_raw_data/20261107133439_S15_S15_F02_raw.csv@2026-11-07 13:34:39,19,268.0,5,S16
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210408100028Apr8_10_00_fasting.csv@20210408100028,482,17.015873015873016,5,S16
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210413094911Apr13_09_49_fasting.csv@20210413094911,19,17.015873015873016,5,S16
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210413151934Apr13_15_19_fasting.csv@20210413151934,442,17.015873015873016,5,S16
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210414154151Apr14_15_41_fasting.csv@20210414154151,29,17.015873015873016,5,S16
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210415081723Apr15_08_17_fasting.csv@20210415081723,13,17.015873015873016,5,S16
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210415165621April15_1656_fasting.csv@20210415165621,171,17.015873015873016,5,S16
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210417163344April17_16_33_fasting.csv@20210417163344,35,17.015873015873016,5,S16
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210418120309April18_12_02_fasting.csv@20210418120309,35,17.015873015873016,5,S16
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210419082504April19_08_25_fasting.csv@20210419082504,112,17.015873015873016,5,S16
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210420094756April20_09_47_fasting.csv@20210420094756,134,17.015873015873016,5,S16
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210421093411April21_09_34_fasting.csv@20210421093411,5,17.015873015873016,5,S16
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210421155031April21_15_50_fasting.csv@20210421155031,2,17.015873015873016,5,S16
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210422071136April22_07_11_fasting.csv@20210422071136,55,17.015873015873016,5,S16
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210422175355April22_17_53_fasting.csv@20210422175355,63,17.015873015873016,5,S16
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210424132222April24_13_22_fasting.csv@20210424132222,25,17.015873015873016,5,S16
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210424165315April24_16_53_fasting.csv@20210424165315,20,17.015873015873016,5,S16
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210425081152April25_0811_fasting.csv@20210425081152,49,17.015873015873016,5,S16
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210922053821Sep22_05_38_fasting.csv@20210922053821,278,17.015873015873016,5,S16
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210925100331Sep25_10_03_fasting.csv@20210925100331,72,17.015873015873016,5,S16
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20210929052647Sep29_05_26_fasting.csv@20210929052647,77,17.015873015873016,5,S16
+Shimmer,S1,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S1/fasting/20211002095228Oct2_09_51_fasting.csv@20211002095228,189,17.015873015873016,5,S16
+Shimmer,S2,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S2/fasting/20211007164123oct07_04_41_fasting.csv@20211007164123,54,89.33333333333333,5,S16
+Shimmer,S2,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S2/fasting/20211011115220oct11_11_52_fasting.csv@20211011115220,66,89.33333333333334,5,S16
+Shimmer,S2,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S2/fasting/20211014123108oct14_12_31_fasting.csv@20211014123108,56,89.33333333333334,5,S16
+Shimmer,S2,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S2/fasting/20211014170751oct14_17_07_fasting.csv@20211014170751,16,89.33333333333333,5,S16
+Shimmer,S3,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S3/fasting/20211129134509November29_fasting.csv@20211129134509,185,89.33333333333333,5,S16
+Shimmer,S3,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S3/fasting/20211129160847November29_fasting.csv@20211129160847,43,89.33333333333334,5,S16
+Shimmer,S3,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S3/fasting/20211129162445November29_fasting.csv@20211129162445,41,89.33333333333333,5,S16
+Shimmer,S3,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S3/fasting/20211129164759November29_fasting.csv@20211129164759,48,89.33333333333334,5,S16
+Shimmer,S4,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211203103200fasting_S4_20211202230000.csv@20211203103200,140,59.55555555555556,5,S16
+Shimmer,S4,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211204080716fasting_S4_20211203230000.csv@20211204080716,294,59.55555555555556,5,S16
+Shimmer,S4,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211205041234fasting_S4_20211204210000.csv@20211205041234,211,59.55555555555556,5,S16
+Shimmer,S4,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211209064440fasting_S4_202112090000.csv@20211209064440,113,59.55555555555556,5,S16
+Shimmer,S4,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211211084723fasting_S4_20211211003000.csv@20211211084723,127,59.55555555555556,5,S16
+Shimmer,S4,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S4/fasting/20211215134443fasting_S4_20211215113000.csv@20211215134443,191,59.55555555555556,5,S16
+Shimmer,S5,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S5/fasting/20211204093522fasting20211203230000_S5.csv@20211204093522,41,178.66666666666666,5,S16
+Shimmer,S5,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S5/fasting/20211211094707fasting_S5_20211211000000.csv@20211211094707,36,178.66666666666666,5,S16
+Shimmer,S6,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S6/fasting/20211204100231fasting_S6_20211203230000.csv@20211204100231,33,178.66666666666669,5,S16
+Shimmer,S6,Shimmer:shimmer-raw-dataset-dehydration/shimmer-raw-dataset-dehydration/S6/fasting/20211211100619fasting_S6_20211211000000.csv@20211211100619,45,178.66666666666666,5,S16

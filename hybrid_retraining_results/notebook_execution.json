@@ -1,0 +1,26 @@
+{
+  "started_utc": "2026-11-12T08:47:18.635094+00:00",
+  "python": "C:\\Users\\April\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+  "status": "completed",
+  "workers": 3,
+  "finished_utc": "2026-11-12T08:48:22.791828+00:00",
+  "code_cells_executed": 8,
+  "protected_input_hashes": {
+    "TRAIN_SEHAT_revisi copy.ipynb": "b2049f4c24fe2b193499e2017f8bb28b243165c02fa7802c12cff2f618a6aa7e",
+    "ppg_preprocessing.py": "1404b2eb56ec4df3756827c9385649ee343f1bbc5f4d3ddbe55dd0e4370a8a3f",
+    "et_hydration_model_S1.h": "10579115c21cdf4cf27ff0fe5e6f2f93abab179c64a9098f1342081982a89160",
+    "rf_hydration_model.h": "0f836d553bbd28f3cd77fad14c3c672c012efe796b075bdcad4d71872c4100c1",
+    "rf_hydration_model_S1.h": "21500b5ded945fdff664be5b8a5865f657555db82a09342c64d24bd713080f13",
+    "bme280\\bme280.ino": "0ef5b09b0b5200ea86bfc54802d09ab2bd82da7fdc9be13ab226283479222002",
+    "grove_gsr\\grove_gsr.ino": "53718c9510b5b01adb8f9362aadb01e614d98cec29c9b615a4445c716f63e61a",
+    "GSR_Preprocessing_ESP32\\GSR_Preprocessing_ESP32.ino": "6fcd482efc7cd650ebd9f2c77effd2596ba382fc47e53965f55f253ae74da47b",
+    "I2C_scanner\\I2C_scanner.ino": "5c0ae3db5fa59c591a17a04d066fc78f66221eedcf45b3fbbba1769fa7ea1591",
+    "max30102\\max30102.ino": "3ea9725920dcfa677190877875236fb9cd538de17dfb2f9a6493e349c65e15e4",
+    "MAX30102_Preprocessing_ESP32\\MAX30102_Preprocessing_ESP32.ino": "470b9d9ef441bde3e233355df985ed8a0736aabd33550cf357a130bf1aeb0548",
+    "SEHAT_ESP32_Unified\\SEHAT_ESP32_Unified.ino": "ca4db64d62ea2cbe6c80bc2fa20c2b0d63e1bdfd79efc9dcd18d77d3f46d3a43",
+    "SEHAT_GSR_PPG_ESP32\\SEHAT_GSR_PPG_ESP32.ino": "bc0b78140cfe503d571344f5252dfadb3302b9c6ffa962bc8452d311361df17f",
+    "SEHAT_GSR_PPG_ESP32_ML\\SEHAT_GSR_PPG_ESP32_ML.ino": "13100bba4a9760286a78afad71e0e71a1b860961b85190ec0355b831d13d81f2",
+    "Data Acquisition\\SEHAT_raw_acquisition_only\\SEHAT_raw_acquisition_only.ino": "dcb5d51da16834c74d66319d92e197fd17d6ce657410b8040d5fa86589c1d424"
+  },
+  "notebook_sha256": "a8fe22543fc7395de1fcdf5ffcc57b28c934b6f546a15b0e0d6eddbb422c4de7"
+}

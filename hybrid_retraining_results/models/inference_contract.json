@@ -1,0 +1,46 @@
+{
+  "selected_model": "D_SEHAT_only",
+  "selection": "lowest pooled recording-level LOSO MAE (exploratory; no independent final test)",
+  "training_recordings": 15,
+  "training_windows": 279,
+  "features_in_order": [
+    "gsr_mean",
+    "gsr_var",
+    "gsr_entropy",
+    "mean_hr",
+    "rmssd",
+    "sdnn",
+    "pnn50",
+    "n_peaks",
+    "ppg_available"
+  ],
+  "units": [
+    "uS",
+    "uS^2",
+    "nats",
+    "beats/min",
+    "ms",
+    "ms",
+    "percent",
+    "count/30sec",
+    "binary"
+  ],
+  "imputation_medians": {
+    "gsr_mean": 4.772358604116829,
+    "gsr_var": 0.10120009076319363,
+    "gsr_entropy": 2.0394539466858506,
+    "mean_hr": 81.52304885186076,
+    "rmssd": 48.47994338604629,
+    "sdnn": 47.998594094072814,
+    "pnn50": 30.303030303030305,
+    "n_peaks": 41.0,
+    "ppg_available": 1.0
+  },
+  "ppg_unavailable": "All five PPG features NaN, ppg_available=0; replace NaNs with these frozen training medians.",
+  "scaling": "none",
+  "personal_statistics_required": false,
+  "log1p": false,
+  "output": "proxy duration hours, not a validated hydration measure",
+  "raw_signal_preprocessing": "hybrid_retraining.py + config.json",
+  "firmware_export": "not performed; feature parity with embedded peak detector must be established first"
+}

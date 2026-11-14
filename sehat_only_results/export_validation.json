@@ -1,0 +1,22 @@
+{
+  "header_numerical_checks_passed": true,
+  "compiler": "g++ C++11 -O2 -Wall -Wextra -Werror -pedantic",
+  "raw_vectors": 6397,
+  "split_boundary_vectors": 5037,
+  "training_windows_through_actual_makeModelInput": 350,
+  "wrapper_vectors": 1701,
+  "raw_max_abs_error_hr": 0.0,
+  "wrapper_max_abs_error_hr": 0.0,
+  "makeModelInput_max_abs_error_hr": 0.0,
+  "legacy_scaler_roundtrip_max_prediction_change_hr": 0.0,
+  "null_length_availability_nonfinite_checks": true,
+  "sketch_syntax_with_new_include": "blocked: identical existing syntax errors with old and new model headers",
+  "existing_sketch_errors": [
+    "missing terminating \" character",
+    "missing terminating \" character",
+    "cannot convert 'float' to 'const char*'",
+    "expected constructor, destructor, or type conversion before ';' token",
+    "expected declaration before '}' token"
+  ],
+  "esp32_hardware_build": false
+}
