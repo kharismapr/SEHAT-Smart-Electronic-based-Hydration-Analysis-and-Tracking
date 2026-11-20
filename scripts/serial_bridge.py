@@ -53,11 +53,11 @@ def main():
             ser = serial.Serial(target_port, BAUD_RATE, timeout=0.05)
             print(f"[Connected] Active link established with ESP32 on {target_port}.\n")
 
-            latest_gsr = 9.5
-            latest_bpm = 72.0
+            latest_gsr = None
+            latest_bpm = None
             latest_spo2 = None
             spo2_valid = False
-            latest_rmssd = 32.0
+            latest_rmssd = None
             latest_hours = None
 
             last_live_post = 0
@@ -77,8 +77,7 @@ def main():
                         if gsr_match:
                             try:
                                 val = float(gsr_match.group(1))
-                                if val > 0:
-                                    latest_gsr = val
+                                latest_gsr = val if val > 0 else None
                             except ValueError:
                                 pass
 
@@ -88,15 +87,15 @@ def main():
                         if hr_match:
                             try:
                                 hr = float(hr_match.group(1))
-                                if 35 <= hr <= 220:
-                                    latest_bpm = hr
+                                latest_bpm = hr if 35 <= hr <= 220 else None
                             except ValueError:
                                 pass
 
                         rmssd_match = re.search(r'rmssd\s*[:=]\s*([\d.]+)', line, re.IGNORECASE)
                         if rmssd_match:
                             try:
-                                latest_rmssd = float(rmssd_match.group(1))
+                                val = float(rmssd_match.group(1))
+                                latest_rmssd = val if val > 0 else None
                             except ValueError:
                                 pass
 
@@ -114,6 +113,9 @@ def main():
                                     if 50 <= val <= 100:
                                         latest_spo2 = val
                                         spo2_valid = True
+                                    else:
+                                        latest_spo2 = None
+                                        spo2_valid = False
                             except ValueError:
                                 pass
 
@@ -127,12 +129,12 @@ def main():
                                     pass
 
                             payload = {
-                                'bpm': round(latest_bpm, 1),
+                                'bpm': round(latest_bpm, 1) if latest_bpm is not None else None,
                                 'spo2': latest_spo2,
                                 'spo2Valid': spo2_valid,
-                                'gsr': round(latest_gsr, 2),
+                                'gsr': round(latest_gsr, 2) if latest_gsr is not None else None,
                                 'predictedHoursSinceHydration': round(latest_hours, 2) if latest_hours is not None else 4.0,
-                                'notes': f'ESP32 ExtraTrees S1 (RMSSD: {latest_rmssd:.1f}ms)'
+                                'notes': f'ESP32 ExtraTrees S1 (RMSSD: {latest_rmssd:.1f}ms)' if latest_rmssd is not None else 'ESP32 ExtraTrees S1'
                             }
                             try:
                                 res = requests.post(f"{API_BASE_URL}/measurements", json=payload, timeout=1.5)
@@ -147,11 +149,11 @@ def main():
                 if now - last_live_post >= 0.25:
                     last_live_post = now
                     live_payload = {
-                        'bpm': round(latest_bpm, 1),
+                        'bpm': round(latest_bpm, 1) if latest_bpm is not None else None,
                         'spo2': latest_spo2,
                         'spo2Valid': spo2_valid,
-                        'gsr': round(latest_gsr, 2),
-                        'rmssd': round(latest_rmssd, 1),
+                        'gsr': round(latest_gsr, 2) if latest_gsr is not None else None,
+                        'rmssd': round(latest_rmssd, 1) if latest_rmssd is not None else None,
                         'predictedHours': round(latest_hours, 2) if latest_hours is not None else None
                     }
                     try:

@@ -19,16 +19,20 @@ app.use(express.json());
 MeasurementRepository.seedDemoDataIfEmpty();
 
 // Ephemeral in-memory live sensor stream (does NOT write to SQLite DB)
-let liveTelemetry = {
-  bpm: 72,
-  spo2: null,
-  spo2Valid: false,
-  gsr: 9.5,
-  rmssd: 32,
-  predictedHours: null,
-  isLive: false,
-  timestamp: 0
-};
+function createEmptyLiveTelemetry() {
+  return {
+    bpm: null,
+    spo2: null,
+    spo2Valid: false,
+    gsr: null,
+    rmssd: null,
+    predictedHours: null,
+    isLive: false,
+    timestamp: 0
+  };
+}
+
+let liveTelemetry = createEmptyLiveTelemetry();
 
 // Device Command Queue (e.g. 'c' = calibrate, 's' = start, 'f' = flush, 'r' = reset)
 let pendingCommands = [];
@@ -100,8 +104,7 @@ function startSerialBridge(port = '') {
       appendBridgeLog(`[Process Error] Failed to spawn python serial_bridge.py: ${err.message}`, 'error');
       if (bridgeProcess === child) {
         bridgeProcess = null;
-        liveTelemetry.timestamp = 0;
-        liveTelemetry.isLive = false;
+        liveTelemetry = createEmptyLiveTelemetry();
       }
     });
 
@@ -112,8 +115,7 @@ function startSerialBridge(port = '') {
       );
       if (bridgeProcess === child) {
         bridgeProcess = null;
-        liveTelemetry.timestamp = 0;
-        liveTelemetry.isLive = false;
+        liveTelemetry = createEmptyLiveTelemetry();
       }
     });
 
@@ -131,8 +133,7 @@ function startSerialBridge(port = '') {
 
 function stopSerialBridge() {
   if (!bridgeProcess) {
-    liveTelemetry.timestamp = 0;
-    liveTelemetry.isLive = false;
+    liveTelemetry = createEmptyLiveTelemetry();
     return false;
   }
   const pid = bridgeProcess.pid;
@@ -143,8 +144,7 @@ function stopSerialBridge() {
   }
   bridgeProcess = null;
   bridgePortArg = null;
-  liveTelemetry.timestamp = 0;
-  liveTelemetry.isLive = false;
+  liveTelemetry = createEmptyLiveTelemetry();
   appendBridgeLog(`[Dashboard] Stopped serial_bridge.py (PID ${pid}).`, 'system');
   return true;
 }
@@ -190,15 +190,20 @@ app.get('/api/telemetry/live', (req, res) => {
 // POST /api/telemetry/live (Streamed from Bridge every 250ms, no DB write)
 app.post('/api/telemetry/live', (req, res) => {
   const { bpm, spo2, spo2Valid, gsr, rmssd, predictedHours } = req.body;
-  const spo2Value = spo2 == null ? null : Number(spo2);
-  const validSpo2 = spo2Valid === true && spo2Value !== null && Number.isFinite(spo2Value) && spo2Value >= 0 && spo2Value <= 100;
+  const parseNullableNumber = (val) => {
+    if (val === null || val === undefined || val === '') return null;
+    const num = Number(val);
+    return Number.isFinite(num) ? num : null;
+  };
+  const spo2Value = parseNullableNumber(spo2);
+  const validSpo2 = spo2Valid === true && spo2Value !== null && spo2Value >= 0 && spo2Value <= 100;
   liveTelemetry = {
-    bpm: Number(bpm ?? liveTelemetry.bpm),
+    bpm: 'bpm' in req.body ? parseNullableNumber(bpm) : liveTelemetry.bpm,
     spo2: validSpo2 ? spo2Value : null,
     spo2Valid: validSpo2,
-    gsr: Number(gsr ?? liveTelemetry.gsr),
-    rmssd: Number(rmssd ?? liveTelemetry.rmssd),
-    predictedHours: predictedHours != null ? Number(predictedHours) : liveTelemetry.predictedHours,
+    gsr: 'gsr' in req.body ? parseNullableNumber(gsr) : liveTelemetry.gsr,
+    rmssd: 'rmssd' in req.body ? parseNullableNumber(rmssd) : liveTelemetry.rmssd,
+    predictedHours: 'predictedHours' in req.body ? parseNullableNumber(predictedHours) : liveTelemetry.predictedHours,
     isLive: true,
     timestamp: Date.now()
   };

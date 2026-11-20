@@ -111,15 +111,7 @@ export const SerialMonitorDrawer = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end">
-      {/* Subtle backdrop */}
-      <div
-        className="fixed inset-0 bg-[#054867]/30 backdrop-blur-[2px] transition-opacity"
-        onClick={onClose}
-      />
-
-      {/* Slide-over Sidebar Panel */}
-      <aside className="relative z-10 w-full max-w-lg bg-[#032536] text-white h-full shadow-2xl border-l border-[#83c4e2]/30 flex flex-col">
+    <aside className="w-[320px] sm:w-[380px] lg:w-[440px] shrink-0 bg-[#032536] text-white h-full shadow-xl border-l border-[#83c4e2]/30 flex flex-col">
         {/* 1. Drawer Header */}
         <div className="px-5 py-4 bg-[#054867] border-b border-[#83c4e2]/25 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
@@ -319,8 +311,7 @@ export const SerialMonitorDrawer = ({
               Send
             </button>
           </div>
-        </form>
-      </aside>
-    </div>
+      </form>
+    </aside>
   );
 };

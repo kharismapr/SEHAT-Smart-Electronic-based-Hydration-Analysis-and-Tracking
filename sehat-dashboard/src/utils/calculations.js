@@ -15,15 +15,17 @@ import { HYDRATION_RULES } from '../constants/config';
  * @param {number} params.gsr - Galvanic skin response / conductance in μS
  * @returns {number} Estimated hours since hydration (Regression result)
  */
-export function estimateHoursSinceHydration({ bpm = 72, gsr = 8.0 }) {
+export function estimateHoursSinceHydration({ bpm = 72, gsr = 8.0 } = {}) {
   // Biological heuristics:
   // 1. Lower GSR (reduced perspiration/conductance) strongly indicates longer dry interval
   // 2. Elevated resting heart rate (PPG) is a common compensation mechanism for blood volume loss
+  const safeBpm = bpm != null && Number.isFinite(Number(bpm)) ? Number(bpm) : 72;
+  const safeGsr = gsr != null && Number.isFinite(Number(gsr)) ? Number(gsr) : 8.0;
   const baselineGsr = 14.0; // Well-hydrated baseline conductance
-  const gsrDeficit = Math.max(0, (baselineGsr - gsr) * 0.95);
+  const gsrDeficit = Math.max(0, (baselineGsr - safeGsr) * 0.95);
   
   const baselineBpm = 68;
-  const bpmDeficit = Math.max(0, (bpm - baselineBpm) * 0.09);
+  const bpmDeficit = Math.max(0, (safeBpm - baselineBpm) * 0.09);
   
   const rawEstimate = gsrDeficit + bpmDeficit;
   

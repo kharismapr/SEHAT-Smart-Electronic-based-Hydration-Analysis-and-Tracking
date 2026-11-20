@@ -104,11 +104,11 @@ export const HistoryTable = ({ history = [], onClear, onExport }) => {
                     <td className="py-3 px-4 text-[#054867]/80 font-sans font-medium">
                       {formatDateTime(row.timestamp)}
                     </td>
-                    <td className="py-3 px-4 text-[#054867] font-bold">{row.bpm}</td>
+                    <td className="py-3 px-4 text-[#054867] font-bold">{row.bpm ?? '--'}</td>
                     <td className="py-3 px-4 text-sky-700 font-bold">
-                      {row.spo2Valid && row.spo2 != null ? row.spo2 : '—'}
+                      {row.spo2Valid && row.spo2 != null ? row.spo2 : '--'}
                     </td>
-                    <td className="py-3 px-4 text-[#1081b7] font-bold">{row.gsr}</td>
+                    <td className="py-3 px-4 text-[#1081b7] font-bold">{row.gsr ?? '--'}</td>
                     <td className="py-3 px-4 font-black text-[#054867]">
                       {Number(row.hoursSinceHydration).toFixed(1)}h
                     </td>

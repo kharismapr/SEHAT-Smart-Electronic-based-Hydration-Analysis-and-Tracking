@@ -7,7 +7,7 @@ import { SensorMetricCard } from './SensorMetricCard';
  * Palette: #054867, #1081b7, #83c4e2, white
  */
 export const SensorGrid = ({ reading, isLive = false }) => {
-  const { bpm = 72, spo2 = null, spo2Valid = false, gsr = 6.4 } = reading || {};
+  const { bpm = null, spo2 = null, spo2Valid = false, gsr = null } = reading || {};
 
   return (
     <div className="space-y-2">
@@ -33,7 +33,7 @@ export const SensorGrid = ({ reading, isLive = false }) => {
         {/* Blood oxygen saturation from MAX30102 red/IR channels */}
         <SensorMetricCard
           label="Oxygen Saturation (SpO₂)"
-          value={spo2Valid ? spo2 : '—'}
+          value={spo2Valid && spo2 != null ? spo2 : null}
           unit="%"
           icon={Activity}
         />

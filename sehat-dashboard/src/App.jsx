@@ -74,13 +74,13 @@ export default function App() {
   };
 
   const displayHours = latestResult ? latestResult.hoursSinceHydration : null;
-  const currentSensorDisplay = isMeasuring ? rawSensors : (latestResult || rawSensors);
+  const currentSensorDisplay = (isMeasuring || isConnected) ? rawSensors : (latestResult || rawSensors);
 
   return (
-    <div className="min-h-screen bg-[#f4f8fa] text-[#054867] flex flex-col antialiased">
+    <div className="h-screen overflow-hidden bg-[#f4f8fa] text-[#054867] flex flex-col antialiased">
       {/* 1. Sleek Top Navigation Bar */}
       <header
-        className="w-full text-white shadow-md sticky top-0 z-50 px-6 lg:px-12 py-4 flex items-center justify-between border-b border-[#83c4e2]/30"
+        className="w-full shrink-0 text-white shadow-md z-50 px-6 lg:px-12 py-4 flex items-center justify-between border-b border-[#83c4e2]/30"
         style={{
           background: 'linear-gradient(90deg, #054867 0%, #1081b7 100%)'
         }}
@@ -131,9 +131,13 @@ export default function App() {
           {/* Serial Monitor Drawer Toggle Button */}
           <button
             type="button"
-            onClick={() => setIsMonitorOpen(true)}
-            title="Open CLI Serial Monitor & Troubleshooter"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-white/10 hover:bg-white/20 border border-white/20 text-white transition-colors cursor-pointer"
+            onClick={() => setIsMonitorOpen((prev) => !prev)}
+            title="Toggle CLI Serial Monitor & Troubleshooter"
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-colors cursor-pointer ${
+              isMonitorOpen
+                ? 'bg-white/25 border-white/40 text-white'
+                : 'bg-white/10 hover:bg-white/20 border-white/20 text-white'
+            }`}
           >
             <Terminal className="w-3.5 h-3.5 text-[#83c4e2]" />
             <span className="hidden sm:inline">Serial Monitor</span>
@@ -173,70 +177,75 @@ export default function App() {
         </div>
       </header>
 
-      {/* Slide-over CLI Serial Monitor Sidebar */}
-      <SerialMonitorDrawer
-        isOpen={isMonitorOpen}
-        onClose={() => setIsMonitorOpen(false)}
-        isConnected={isConnected}
-        bridgeRunning={bridgeRunning}
-        selectedPort={selectedPort}
-        onSelectPort={setSelectedPort}
-        onStartBridge={handleStartBridge}
-        onStopBridge={handleStopBridge}
-      />
+      {/* 2. Split Workspace: Main Dashboard + Docked Serial Monitor Sidebar */}
+      <div className="flex-1 flex min-h-0 overflow-hidden">
+        {/* Scrollable Main Column (shrinks cleanly when sidebar is open) */}
+        <div className="flex-1 min-w-0 overflow-y-auto flex flex-col">
+          <main className="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+            
+            {/* Sampling Trigger Protocol */}
+            <section>
+              <MeasurementTrigger
+                isMeasuring={isMeasuring}
+                isInferring={isInferring}
+                measurementProgress={measurementProgress}
+                secondsRemaining={secondsRemaining}
+                onStart={handleStart}
+                onCalibrate={handleCalibrate}
+                onFlush={handleFlush}
+                onReset={handleReset}
+              />
+            </section>
 
-      {/* 2. Main Single-Page Workspace */}
-      <main className="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
-        
-        {/* Sampling Trigger Protocol */}
-        <section>
-          <MeasurementTrigger
-            isMeasuring={isMeasuring}
-            isInferring={isInferring}
-            measurementProgress={measurementProgress}
-            secondsRemaining={secondsRemaining}
-            onStart={handleStart}
-            onCalibrate={handleCalibrate}
-            onFlush={handleFlush}
-            onReset={handleReset}
-          />
-        </section>
+            {/* Prediction Target & Classification Status Banner */}
+            <section className="space-y-2">
+              <VitalStatusBanner
+                hoursSinceHydration={displayHours}
+                isMeasuring={isMeasuring}
+                isInferring={isInferring}
+              />
+            </section>
 
-        {/* Prediction Target & Classification Status Banner */}
-        <section className="space-y-2">
-          <VitalStatusBanner
-            hoursSinceHydration={displayHours}
-            isMeasuring={isMeasuring}
-            isInferring={isInferring}
-          />
-        </section>
+            {/* Multisensor Data Stream Grid */}
+            <section className="space-y-2">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[#054867]/60">
+                Multisensor Live Streams
+              </h3>
+              <SensorGrid
+                reading={currentSensorDisplay}
+                isLive={isMeasuring}
+              />
+            </section>
 
-        {/* Multisensor Data Stream Grid */}
-        <section className="space-y-2">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-[#054867]/60">
-            Multisensor Live Streams
-          </h3>
-          <SensorGrid
-            reading={currentSensorDisplay}
-            isLive={isMeasuring}
-          />
-        </section>
+            {/* Specimen History Table directly below */}
+            <section className="pt-2">
+              <HistoryTable
+                history={history}
+                onClear={clearHistory}
+                onExport={handleExportCSV}
+              />
+            </section>
 
-        {/* Specimen History Table directly below */}
-        <section className="pt-2">
-          <HistoryTable
-            history={history}
-            onClear={clearHistory}
-            onExport={handleExportCSV}
-          />
-        </section>
+          </main>
 
-      </main>
+          {/* 3. Subtle Footer */}
+          <footer className="border-t border-[#83c4e2]/30 py-4 text-center text-xs text-[#054867]/60 bg-white/60">
+            SEHAT System • Edge Biosignal Intelligence & Hydration Ingestion Pipeline
+          </footer>
+        </div>
 
-      {/* 3. Subtle Footer */}
-      <footer className="border-t border-[#83c4e2]/30 py-4 text-center text-xs text-[#054867]/60 bg-white/60">
-        SEHAT System • Edge Biosignal Intelligence & Hydration Ingestion Pipeline
-      </footer>
+        {/* Docked CLI Serial Monitor Sidebar (sits beside main content, no backdrop blur) */}
+        <SerialMonitorDrawer
+          isOpen={isMonitorOpen}
+          onClose={() => setIsMonitorOpen(false)}
+          isConnected={isConnected}
+          bridgeRunning={bridgeRunning}
+          selectedPort={selectedPort}
+          onSelectPort={setSelectedPort}
+          onStartBridge={handleStartBridge}
+          onStopBridge={handleStopBridge}
+        />
+      </div>
     </div>
   );
 }

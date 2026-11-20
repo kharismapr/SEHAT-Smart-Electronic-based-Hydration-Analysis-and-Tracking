@@ -16,11 +16,11 @@ export const CLINICAL_WINDOW_SEC = 30;
 export function useSehatTelemetry() {
   // Live biosignal telemetry feeds (ephemeral display only, updates gauges)
   const [rawSensors, setRawSensors] = useState({
-    bpm: 72,
+    bpm: null,
     spo2: null,
     spo2Valid: false,
-    gsr: 9.5,
-    rmssd: 32,
+    gsr: null,
+    rmssd: null,
     predictedHours: null,
     isLive: false,
     bridgeRunning: false
@@ -66,33 +66,59 @@ export function useSehatTelemetry() {
   useEffect(() => {
     let isMounted = true;
 
+    const toNullableNum = (val) => {
+      if (val === null || val === undefined || val === '') return null;
+      const num = Number(val);
+      return Number.isFinite(num) ? num : null;
+    };
+
     const pollLiveSensors = async () => {
       try {
         const live = await HistoryService.fetchLiveTelemetry();
         if (!isMounted) return;
         if (live) {
+          const spo2Num = toNullableNum(live.spo2);
+          const spo2Valid = live.spo2Valid === true && spo2Num !== null;
           setRawSensors({
-            bpm: Number(live.bpm) || 72,
-            spo2: live.spo2Valid && Number.isFinite(Number(live.spo2)) ? Number(live.spo2) : null,
-            spo2Valid: live.spo2Valid === true,
-            gsr: Number(live.gsr) || 9.5,
-            rmssd: Number(live.rmssd) || 32,
-            predictedHours: live.predictedHours != null ? Number(live.predictedHours) : null,
+            bpm: toNullableNum(live.bpm),
+            spo2: spo2Valid ? spo2Num : null,
+            spo2Valid,
+            gsr: toNullableNum(live.gsr),
+            rmssd: toNullableNum(live.rmssd),
+            predictedHours: toNullableNum(live.predictedHours),
             isLive: Boolean(live.isLive),
             bridgeRunning: Boolean(live.bridgeRunning)
           });
         } else {
           setRawSensors(prev =>
-            prev.isLive || prev.bridgeRunning
-              ? { ...prev, isLive: false, bridgeRunning: false }
+            prev.isLive || prev.bridgeRunning || prev.bpm !== null || prev.gsr !== null || prev.spo2 !== null
+              ? {
+                  bpm: null,
+                  spo2: null,
+                  spo2Valid: false,
+                  gsr: null,
+                  rmssd: null,
+                  predictedHours: null,
+                  isLive: false,
+                  bridgeRunning: false
+                }
               : prev
           );
         }
       } catch {
         if (isMounted) {
           setRawSensors(prev =>
-            prev.isLive || prev.bridgeRunning
-              ? { ...prev, isLive: false, bridgeRunning: false }
+            prev.isLive || prev.bridgeRunning || prev.bpm !== null || prev.gsr !== null || prev.spo2 !== null
+              ? {
+                  bpm: null,
+                  spo2: null,
+                  spo2Valid: false,
+                  gsr: null,
+                  rmssd: null,
+                  predictedHours: null,
+                  isLive: false,
+                  bridgeRunning: false
+                }
               : prev
           );
         }
@@ -191,7 +217,7 @@ export function useSehatTelemetry() {
         hoursSinceHydration: finalHours,
         predictedHoursSinceHydration: finalHours,
         statusKey: finalStatus.key,
-        notes: `30s Clinical Session (RMSSD: ${captured.rmssd || 32}ms)`
+        notes: `30s Clinical Session (RMSSD: ${captured.rmssd != null ? `${captured.rmssd}ms` : '--'})`
       };
 
       // Commit ONLY THIS SINGLE RESULT to SQLite Database & History Table
